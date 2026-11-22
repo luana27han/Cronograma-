@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plano Poliglota 54 Semanas + Irodori A1 + Genki 1 + Tae Kim</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .jp-font { font-family: 'Noto Sans JP', 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
+
+  <!-- Toast Flutuante -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Modal de Confirmação Personalizado -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <h3 id="confirm-title" class="text-lg font-bold text-slate-900 dark:text-white mb-2">Confirmar ação</h3>
+      <p id="confirm-message" class="text-sm text-slate-600 dark:text-slate-300 mb-6">Tem certeza que deseja continuar?</p>
+      <div class="flex justify-end gap-3">
+        <button type="button" id="confirm-cancel" class="px-4 py-2.5 rounded-xl text-sm font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">Cancelar</button>
+        <button type="button" id="confirm-ok" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cabeçalho Fixo -->
+  <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <!-- Identidade -->
+        <div class="flex items-start sm:items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-rose-500 via-indigo-600 to-teal-500 flex items-center justify-center text-white font-bold text-lg shadow-md shrink-0">
+            彩
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                Plano Poliglota 54 Semanas
+              </h1>
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                Irodori + Genki 1 + Tae Kim
+              </span>
+            </div>
+            <p id="header-subtitle" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              21/11/2026 a 01/12/2027 • ~2h/dia (Seg–Sex) • Japonês, Coreano & Inglês
+            </p>
+          </div>
+        </div>
+
+        <!-- Botões de Backup, Reset e Tema -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="exportBackup()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+            <span>⬇ Exportar JSON</span>
+          </button>
+
+          <label class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 cursor-pointer transition">
+            <span>⬆ Importar JSON</span>
+            <input type="file" id="import-file" accept=".json" class="hidden" onchange="importBackup(event)" />
+          </label>
+
+          <button type="button" onclick="confirmReset()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200/70 dark:border-rose-800/60 transition">
+            <span>↺ Resetar</span>
+          </button>
+
+          <button type="button" onclick="toggleDarkMode()" id="theme-toggle" class="p-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition text-sm font-bold" aria-label="Alternar tema">
+            <span id="theme-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Barras de Progresso -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2.5 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+        <!-- Geral -->
+        <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-2.5 px-3 border border-slate-200/70 dark:border-slate-700/60">
+          <div class="flex justify-between items-center text-[11px] font-semibold mb-1">
+            <span class="text-slate-600 dark:text-slate-300">Progresso Geral</span>
+            <span id="header-global-pct" class="text-indigo-600 dark:text-indigo-400 font-bold">0%</span>
+          </div>
+          <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div id="header-global-bar" class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div id="header-global-count" class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">0 de 0 tarefas</div>
+        </div>
+
+        <!-- Irodori A1 -->
+        <div class="bg-rose-50/70 dark:bg-rose-950/30 rounded-xl p-2.5 px-3 border border-rose-200/80 dark:border-rose-800/50">
+          <div class="flex justify-between items-center text-[11px] font-semibold mb-1">
+            <span class="text-rose-800 dark:text-rose-200">📕 Irodori A1</span>
+            <span id="header-irodori-pct" class="text-rose-600 dark:text-rose-400 font-bold">0/18</span>
+          </div>
+          <div class="w-full h-1.5 bg-rose-200/70 dark:bg-rose-900/60 rounded-full overflow-hidden">
+            <div id="header-irodori-bar" class="h-full bg-rose-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div id="header-irodori-sub" class="text-[10px] text-rose-700/80 dark:text-rose-300/80 mt-1 truncate">0 lições completas</div>
+        </div>
+
+        <!-- Genki 1 -->
+        <div class="bg-indigo-50/70 dark:bg-indigo-950/30 rounded-xl p-2.5 px-3 border border-indigo-200/80 dark:border-indigo-800/50">
+          <div class="flex justify-between items-center text-[11px] font-semibold mb-1">
+            <span class="text-indigo-800 dark:text-indigo-200">📘 Genki 1</span>
+            <span id="header-genki-pct" class="text-indigo-600 dark:text-indigo-400 font-bold">0/12</span>
+          </div>
+          <div class="w-full h-1.5 bg-indigo-200/70 dark:bg-indigo-900/60 rounded-full overflow-hidden">
+            <div id="header-genki-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div id="header-genki-sub" class="text-[10px] text-indigo-700/80 dark:text-indigo-300/80 mt-1 truncate">0 capítulos concluídos</div>
+        </div>
+
+        <!-- Guia Tae Kim -->
+        <div class="bg-amber-50/70 dark:bg-amber-950/30 rounded-xl p-2.5 px-3 border border-amber-200/80 dark:border-amber-800/50">
+          <div class="flex justify-between items-center text-[11px] font-semibold mb-1">
+            <span class="text-amber-800 dark:text-amber-200">📙 Tae Kim</span>
+            <span id="header-taekim-pct" class="text-amber-600 dark:text-amber-400 font-bold">0/30</span>
+          </div>
+          <div class="w-full h-1.5 bg-amber-200/70 dark:bg-amber-900/60 rounded-full overflow-hidden">
+            <div id="header-taekim-bar" class="h-full bg-amber-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div id="header-taekim-sub" class="text-[10px] text-amber-700/80 dark:text-amber-300/80 mt-1 truncate">0 módulos estudados</div>
+        </div>
+
+        <!-- Japonês -->
+        <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-2.5 px-3 border border-slate-200/70 dark:border-slate-700/60">
+          <div class="flex justify-between items-center text-[11px] font-semibold mb-1">
+            <span class="text-slate-600 dark:text-slate-300">🇯🇵 Japonês (F1 & F2)</span>
+            <span id="header-jp-pct" class="text-emerald-600 dark:text-emerald-400 font-bold">0%</span>
+          </div>
+          <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div id="header-jp-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">Metas semanais JP</div>
+        </div>
+
+        <!-- Coreano & Inglês -->
+        <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-2.5 px-3 border border-slate-200/70 dark:border-slate-700/60">
+          <div class="flex justify-between items-center text-[11px] font-semibold mb-1">
+            <span class="text-slate-600 dark:text-slate-300">🇰🇷 KR & 🇺🇸 EN</span>
+            <span id="header-kr-en-pct" class="text-sky-600 dark:text-sky-400 font-bold">0%</span>
+          </div>
+          <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div id="header-kr-en-bar" class="h-full bg-sky-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">Início na Sem. 7 (Jan/27)</div>
+        </div>
+      </div>
+
+      <!-- Abas de Navegação -->
+      <nav class="flex items-center gap-2 mt-4 overflow-x-auto pb-1" role="tablist">
+        <button type="button" onclick="switchTab('schedule')" id="tab-btn-schedule" class="tab-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-indigo-600 text-white shadow-sm">
+          <span>📅 Cronograma (54 Semanas)</span>
+        </button>
+
+        <button type="button" onclick="switchTab('irodori')" id="tab-btn-irodori" class="tab-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
+          <span>📕 Irodori A1 (18 Lições)</span>
+          <span id="tab-irodori-badge" class="px-1.5 py-0.5 text-[11px] rounded-md bg-rose-100 text-rose-700 dark:bg-rose-900/70 dark:text-rose-200 font-bold">0/18</span>
+        </button>
+
+        <button type="button" onclick="switchTab('genki')" id="tab-btn-genki" class="tab-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
+          <span>📘 Genki 1 (12 Lições)</span>
+          <span id="tab-genki-badge" class="px-1.5 py-0.5 text-[11px] rounded-md bg-indigo-100 text-indigo-700 dark:bg-indigo-900/70 dark:text-indigo-200 font-bold">0/12</span>
+        </button>
+
+        <button type="button" onclick="switchTab('taekim')" id="tab-btn-taekim" class="tab-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
+          <span>📙 Guia Tae Kim</span>
+          <span id="tab-taekim-badge" class="px-1.5 py-0.5 text-[11px] rounded-md bg-amber-100 text-amber-700 dark:bg-amber-900/70 dark:text-amber-200 font-bold">0/30</span>
+        </button>
+
+        <button type="button" onclick="switchTab('routine')" id="tab-btn-routine" class="tab-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
+          <span>📖 Rotina & Materiais (Seg–Sex)</span>
+        </button>
+
+        <button type="button" onclick="switchTab('metrics')" id="tab-btn-metrics" class="tab-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
+          <span>📊 Métricas & Evolução</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ===================================================================== -->
+    <!-- ABA 1: CRONOGRAMA (54 SEMANAS)                                        -->
+    <!-- ===================================================================== -->
+    <section id="view-schedule" class="space-y-5">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="relative flex-1">
+            <input type="text" id="search-input" oninput="renderSchedule()" placeholder="🔍 Buscar lição (ex: Irodori, Lição 5, Genki, Tae Kim, Hangul, Restaurante)..." class="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="filter-phase" onchange="renderSchedule()" class="px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="all">Todas as Fases (1–54)</option>
+              <option value="1">Fase 1: Imersão Japonês (Sem. 1–6)</option>
+              <option value="2">Fase 2: Expansão Poliglota (Sem. 7–54)</option>
+            </select>
+
+            <button type="button" onclick="expandCollapseAll(true)" class="px-3 py-2.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
+              Expandir Visíveis
+            </button>
+            <button type="button" onclick="expandCollapseAll(false)" class="px-3 py-2.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
+              Recolher
+            </button>
+          </div>
+        </div>
+
+        <!-- Filtros por Material -->
+        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 mr-1">Material:</span>
+          <button type="button" onclick="setMaterialFilter('all')" data-mat="all" class="mat-pill ring-2 ring-offset-2 ring-indigo-500 dark:ring-offset-slate-900 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-white dark:bg-white dark:text-slate-900 transition">
+            Todos
+          </button>
+          <button type="button" onclick="setMaterialFilter('irodori')" data-mat="irodori" class="mat-pill px-3 py-1.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-300 dark:border-rose-700 transition">
+            📕 Irodori A1
+          </button>
+          <button type="button" onclick="setMaterialFilter('genki')" data-mat="genki" class="mat-pill px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition">
+            📘 Genki 1
+          </button>
+          <button type="button" onclick="setMaterialFilter('taekim')" data-mat="taekim" class="mat-pill px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800 transition">
+            📙 Guia Tae Kim
+          </button>
+          <button type="button" onclick="setMaterialFilter('immersion')" data-mat="immersion" class="mat-pill px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 transition">
+            🎧 Imersão / YouTube
+          </button>
+          <button type="button" onclick="setMaterialFilter('apps')" data-mat="apps" class="mat-pill px-3 py-1.5 rounded-full text-xs font-semibold bg-violet-100 text-violet-800 dark:bg-violet-950/80 dark:text-violet-300 border border-violet-200 dark:border-violet-800 transition">
+            📱 Apps / Kana / Kanji
+          </button>
+          <button type="button" onclick="setMaterialFilter('korean')" data-mat="korean" class="mat-pill px-3 py-1.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-200 dark:border-sky-800 transition">
+            🇰🇷 Coreano
+          </button>
+          <button type="button" onclick="setMaterialFilter('english')" data-mat="english" class="mat-pill px-3 py-1.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-800 dark:bg-pink-950/80 dark:text-pink-300 border border-pink-200 dark:border-pink-800 transition">
+            🇺🇸 Inglês
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 px-1">
+        <span id="schedule-count-label">Exibindo 54 de 54 semanas</span>
+        <span>Dica: veja nas abas Irodori, Genki 1 e Tae Kim os mapas completos de assuntos e checklists individuais.</span>
+      </div>
+
+      <div id="weeks-container" class="space-y-3"></div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ABA 2: IRODORI A1 (18 LIÇÕES + EXPRESSÕES DE SALA DE AULA)            -->
+    <!-- ===================================================================== -->
+    <section id="view-irodori" class="hidden space-y-6">
+      <div class="bg-gradient-to-br from-rose-600 via-rose-700 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-2xl">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-xs font-semibold">
+              Fundação Japão • Nível Introdutório (入門 / Nyūmon — A1)
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight jp-font">
+              いろどり — Irodori: Japonês para a Vida no Japão
+            </h2>
+            <p class="text-sm text-rose-100 leading-relaxed">
+              Edição compilada em português (464 páginas • Expressões de Sala de Aula + 18 lições divididas em 9 tópicos). Marque Leitura/Notas, Áudio MP3 e Shadowing em cada lição.
+            </p>
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <a href="https://www.irodori.jpf.go.jp/starter/pdf.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-rose-700 hover:bg-rose-50 font-bold text-xs sm:text-sm shadow transition">
+                <span>🎧 Baixar Áudios MP3 Oficiais (irodori.jpf.go.jp)</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 min-w-[250px] space-y-2">
+            <div class="text-xs uppercase tracking-wider text-rose-200 font-bold">Progresso Irodori A1</div>
+            <div class="flex items-end justify-between">
+              <div id="irodori-panel-completed" class="text-3xl font-extrabold">0 / 18</div>
+              <div id="irodori-panel-pct" class="text-sm font-bold text-rose-200">0%</div>
+            </div>
+            <div class="w-full h-2.5 bg-black/30 rounded-full overflow-hidden">
+              <div id="irodori-panel-bar" class="h-full bg-white rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/15 text-center text-xs">
+              <div><div id="irodori-stat-study" class="font-bold text-base">0</div><div class="text-rose-200 text-[11px]">Leitura</div></div>
+              <div><div id="irodori-stat-audio" class="font-bold text-base">0</div><div class="text-rose-200 text-[11px]">Áudio</div></div>
+              <div><div id="irodori-stat-shadow" class="font-bold text-base">0</div><div class="text-rose-200 text-[11px]">Shadowing</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expressões de Sala de Aula -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-rose-200 dark:border-rose-900/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">Módulo Zero • Págs. 13–20</span>
+            <span class="text-xs font-semibold text-slate-500">Semana 1</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white jp-font">
+            教室の日本語 — Expressões de Sala de Aula & Instruções
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+            Frases essenciais para entender os comandos dos áudios (<em>Kiite kudasai</em>, <em>Mou ichido onegaishimasu</em>, <em>Wakarimashita</em>).
+          </p>
+        </div>
+        <label class="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 cursor-pointer shrink-0 select-none">
+          <input type="checkbox" id="irodori-classroom-check" onchange="toggleIrodoriClassroom(this.checked)" class="w-5 h-5 rounded text-rose-600 focus:ring-rose-500" />
+          <span class="text-sm font-semibold text-rose-900 dark:text-rose-200">Módulo Concluído</span>
+        </label>
+      </div>
+
+      <!-- 18 Lições -->
+      <div id="irodori-lessons-container" class="space-y-6"></div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ABA 3: GENKI 1 (12 LIÇÕES — 3ª EDIÇÃO)                                -->
+    <!-- ===================================================================== -->
+    <section id="view-genki" class="hidden space-y-6">
+      <div class="bg-gradient-to-br from-indigo-600 via-blue-700 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-2xl">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-xs font-semibold">
+              An Integrated Course in Elementary Japanese • 3ª Edição (JLPT N5)
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight jp-font">
+              げんき I — Genki 1: Mapa Completo das 12 Lições
+            </h2>
+            <p class="text-sm text-indigo-100 leading-relaxed">
+              Acompanhe todos os capítulos do Livro Texto (Grammar & Dialogue), Caderno de Exercícios (Workbook) e a seção de Leitura & Escrita (Reading and Writing — Kana e 145 Kanjis básicos).
+            </p>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 min-w-[260px] space-y-2">
+            <div class="text-xs uppercase tracking-wider text-indigo-200 font-bold">Progresso Genki 1</div>
+            <div class="flex items-end justify-between">
+              <div id="genki-panel-completed" class="text-3xl font-extrabold">0 / 12</div>
+              <div id="genki-panel-pct" class="text-sm font-bold text-indigo-200">0%</div>
+            </div>
+            <div class="w-full h-2.5 bg-black/30 rounded-full overflow-hidden">
+              <div id="genki-panel-bar" class="h-full bg-white rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/15 text-center text-xs">
+              <div><div id="genki-stat-textbook" class="font-bold text-base">0</div><div class="text-indigo-200 text-[11px]">Livro Texto</div></div>
+              <div><div id="genki-stat-workbook" class="font-bold text-base">0</div><div class="text-indigo-200 text-[11px]">Workbook</div></div>
+              <div><div id="genki-stat-kanji" class="font-bold text-base">0</div><div class="text-indigo-200 text-[11px]">Leitura/Kanji</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="genki-lessons-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ABA 4: GUIA DE GRAMÁTICA JAPONESA DO TAE KIM (EM PORTUGUÊS)           -->
+    <!-- ===================================================================== -->
+    <section id="view-taekim" class="hidden space-y-6">
+      <div class="bg-gradient-to-br from-amber-600 via-orange-700 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-2xl">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-xs font-semibold">
+              Tae Kim's Guide to Learning Japanese • Edição em Português
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight jp-font">
+              Guia de Gramática Japonesa do Tae Kim
+            </h2>
+            <p class="text-sm text-amber-100 leading-relaxed">
+              Dividido nos 3 grandes blocos estruturais do guia (Sistema de Escrita, Gramática Básica e Gramática Essencial) com a equivalência aproximada aos capítulos do Genki 1 para você estudar os mesmos conceitos sob duas perspectivas.
+            </p>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 min-w-[260px] space-y-2">
+            <div class="text-xs uppercase tracking-wider text-amber-200 font-bold">Progresso Guia Tae Kim</div>
+            <div class="flex items-end justify-between">
+              <div id="taekim-panel-completed" class="text-3xl font-extrabold">0 / 30</div>
+              <div id="taekim-panel-pct" class="text-sm font-bold text-amber-200">0%</div>
+            </div>
+            <div class="w-full h-2.5 bg-black/30 rounded-full overflow-hidden">
+              <div id="taekim-panel-bar" class="h-full bg-white rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/15 text-center text-xs">
+              <div><div id="taekim-stat-read" class="font-bold text-base">0</div><div class="text-amber-200 text-[11px]">Leitura / Notas</div></div>
+              <div><div id="taekim-stat-practice" class="font-bold text-base">0</div><div class="text-amber-200 text-[11px]">Revisão Prática</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="taekim-modules-container" class="space-y-6"></div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ABA 5: ROTINA & MATERIAIS (TEMPO + GRADE SEG–SEX + MATERIAIS EXTRAS)  -->
+    <!-- ===================================================================== -->
+    <section id="view-routine" class="hidden space-y-6">
+
+      <!-- CONFIGURADOR INTERATIVO DE CARGA HORÁRIA EDITÁVEL -->
+      <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl border border-indigo-200/80 dark:border-indigo-900/60 shadow-sm space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 mb-1">
+              ⏱️ Personalização de Carga Horária
+            </span>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+              Configurador de Tempo Diário e por Idioma
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Ajuste sua meta diária de estudo e distribua o tempo entre Japonês, Coreano e Inglês para a Fase 2. Tudo atualiza automaticamente a grade e o cabeçalho.
+            </p>
+          </div>
+          <button type="button" onclick="resetScheduleTimeDefaults()" class="self-start md:self-center px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+            ↺ Padrão (2h/dia)
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <!-- 1) Seletor de Carga Horária Diária Total -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-extrabold text-slate-900 dark:text-white">1. Carga Horária Diária Total (Seg–Sex)</span>
+              <span id="cfg-daily-badge" class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-indigo-600 text-white">2h (120 min/dia)</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="setDailyMinutes(120)" data-preset-min="120" class="preset-min-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm transition">2h</button>
+              <button type="button" onclick="setDailyMinutes(150)" data-preset-min="150" class="preset-min-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 transition">2.5h</button>
+              <button type="button" onclick="setDailyMinutes(180)" data-preset-min="180" class="preset-min-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 transition">3h</button>
+              <button type="button" onclick="setDailyMinutes(240)" data-preset-min="240" class="preset-min-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 transition">4h</button>
+
+              <div class="flex items-center gap-1.5 ml-auto">
+                <label for="cfg-custom-minutes" class="text-xs font-semibold text-slate-500 dark:text-slate-400">Min/dia:</label>
+                <input type="number" id="cfg-custom-minutes" min="30" max="720" step="10" value="120" oninput="setDailyMinutes(this.value)" class="w-20 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-center" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200/70 dark:border-slate-700 text-center">
+              <div class="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/70 dark:border-amber-800/50">
+                <div class="text-[10px] font-bold text-amber-700 dark:text-amber-300">BLOCO 1 (25%)</div>
+                <div id="cfg-b1-label" class="text-xs font-extrabold text-slate-900 dark:text-white">30 min</div>
+              </div>
+              <div class="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/70 dark:border-indigo-800/50">
+                <div class="text-[10px] font-bold text-indigo-700 dark:text-indigo-300">BLOCO 2 (50%)</div>
+                <div id="cfg-b2-label" class="text-xs font-extrabold text-slate-900 dark:text-white">60 min</div>
+              </div>
+              <div class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/70 dark:border-emerald-800/50">
+                <div class="text-[10px] font-bold text-emerald-700 dark:text-emerald-300">BLOCO 3 (25%)</div>
+                <div id="cfg-b3-label" class="text-xs font-extrabold text-slate-900 dark:text-white">30 min</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2) Alocador por Idioma na Fase 2 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-sm font-extrabold text-slate-900 dark:text-white">2. Alocação por Idioma (Fase 2: Sem. 7–54)</span>
+              <div class="inline-flex rounded-lg bg-white dark:bg-slate-900 p-0.5 border border-slate-200 dark:border-slate-700">
+                <button type="button" onclick="setAllocUnit('session')" id="alloc-unit-session" class="px-2 py-1 rounded-md text-[11px] font-bold bg-indigo-600 text-white transition">Min / Sessão</button>
+                <button type="button" onclick="setAllocUnit('week')" id="alloc-unit-week" class="px-2 py-1 rounded-md text-[11px] font-bold text-slate-600 dark:text-slate-300 transition">Horas / Semana</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5">
+              <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-rose-200/80 dark:border-rose-900/60">
+                <label class="block text-[11px] font-extrabold text-rose-700 dark:text-rose-300 mb-1">🇯🇵 Japonês (3x/sem)</label>
+                <input type="number" id="alloc-input-jp" min="0" step="5" oninput="updateLangAllocation('jp', this.value)" class="w-full px-2 py-1.5 rounded-lg text-xs font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                <div id="alloc-sub-jp" class="text-[10px] text-slate-500 mt-1">120m/sessão • 6h/sem</div>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-sky-200/80 dark:border-sky-900/60">
+                <label class="block text-[11px] font-extrabold text-sky-700 dark:text-sky-300 mb-1">🇰🇷 Coreano (2x/sem)</label>
+                <input type="number" id="alloc-input-kr" min="0" step="5" oninput="updateLangAllocation('kr', this.value)" class="w-full px-2 py-1.5 rounded-lg text-xs font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                <div id="alloc-sub-kr" class="text-[10px] text-slate-500 mt-1">60m/sessão • 2h/sem</div>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-pink-200/80 dark:border-pink-900/60">
+                <label class="block text-[11px] font-extrabold text-pink-700 dark:text-pink-300 mb-1">🇺🇸 Inglês (2x/sem)</label>
+                <input type="number" id="alloc-input-en" min="0" step="5" oninput="updateLangAllocation('en', this.value)" class="w-full px-2 py-1.5 rounded-lg text-xs font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                <div id="alloc-sub-en" class="text-[10px] text-slate-500 mt-1">60m/sessão • 2h/sem</div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/70 dark:border-slate-700 text-xs">
+              <span class="font-semibold text-slate-600 dark:text-slate-300">
+                Total Semanal Alocado: <strong id="alloc-weekly-total" class="text-indigo-600 dark:text-indigo-400">10h (600 min/sem)</strong>
+              </span>
+              <span id="alloc-weekly-diff" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                Alinhado com a meta semanal (10h)
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade Visual Diária -->
+      <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 mb-1">
+              🗓️ Repartição Diária (<span id="grid-subtitle-hours">~2h/dia</span>)
+            </span>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+              Grade Visual de Segunda a Sexta
+            </h2>
+            <p id="grid-description-blocks" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Você não estuda a mesma coisa todos os dias: distribua as tarefas da semana nos 5 dias úteis em 3 blocos (30m + 60m + 30m).
+            </p>
+          </div>
+
+          <div class="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700 shrink-0 self-start">
+            <button type="button" onclick="setDailyGridPhase(1)" id="grid-phase-btn-1" class="px-3.5 py-2 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm">
+              Fase 1: Só Japonês (Sem. 1–6)
+            </button>
+            <button type="button" onclick="setDailyGridPhase(2)" id="grid-phase-btn-2" class="px-3.5 py-2 rounded-lg text-xs font-bold transition text-slate-600 dark:text-slate-300">
+              Fase 2: JP + KR + EN (Sem. 7–54)
+            </button>
+          </div>
+        </div>
+
+        <div id="daily-grid-container" class="grid grid-cols-1 md:grid-cols-5 gap-3"></div>
+
+        <!-- Explicação dos 3 Blocos -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+          <div class="p-4 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/50">
+            <div id="explain-b1-title" class="text-xs font-extrabold text-amber-800 dark:text-amber-300 mb-1">BLOCO 1 • 30 MIN — AQUECIMENTO ATIVO</div>
+            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              Traçado de Hiragana, Katakana e Kanji básicos (<em>Write Japanese</em> / <em>Kanji</em>) + revisão rápida de vocabulário no <em>Drops</em>.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/50">
+            <div id="explain-b2-title" class="text-xs font-extrabold text-indigo-800 dark:text-indigo-300 mb-1">BLOCO 2 • 60 MIN — ESTUDO DENSO</div>
+            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              <strong>Seg e Qua:</strong> Lição do <strong>Irodori A1</strong> (diálogos e notas em PT).<br>
+              <strong>Ter e Qui:</strong> Capítulo do <strong>Genki 1</strong> + Workbook + <strong>Guia do Tae Kim</strong> (ou Coreano/Inglês na Fase 2).
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/50">
+            <div id="explain-b3-title" class="text-xs font-extrabold text-emerald-800 dark:text-emerald-300 mb-1">BLOCO 3 • 30 MIN — ESCUTA & IMERSÃO</div>
+            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              <em>Shadowing</em> com os áudios MP3 do Irodori ou vídeos do <em>Comprehensible Japanese</em>, <em>Japanese Super Immersion</em> e <em>Japanese with Lily</em>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOVO BLOCO: MATERIAIS EXTRAS DE JAPONÊS (EDITÁVEL E DINÂMICO) -->
+      <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl border border-rose-200/80 dark:border-rose-900/60 shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 mb-1">
+              🇯🇵 Biblioteca Extra Personalizada
+            </span>
+            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+              ➕ Materiais Extras de Japonês (E-books, Canais e Apps)
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Encontrou algum aplicativo novo, canal do YouTube, site ou e-book complementar de japonês? Cadastre aqui, marque o que já está usando/concluído e leve tudo no seu backup JSON.
+            </p>
+          </div>
+          <div class="px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/60 text-xs font-bold text-rose-700 dark:text-rose-300 shrink-0 self-start">
+            <span id="jp-extras-count">0 materiais cadastrados</span>
+          </div>
+        </div>
+
+        <!-- Formulário para Adicionar Novo Material Extra de Japonês -->
+        <form onsubmit="addJpExtraMaterial(event)" class="grid grid-cols-1 md:grid-cols-12 gap-3 p-4 rounded-2xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200/70 dark:border-rose-800/50">
+          <div class="md:col-span-4">
+            <label for="jp-extra-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nome do Material *</label>
+            <input type="text" id="jp-extra-name" required placeholder="Ex: Anki Core 2k, Miku Real Japanese, Marugoto..." class="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-rose-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-rose-500" />
+          </div>
+
+          <div class="md:col-span-3">
+            <label for="jp-extra-type" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tipo</label>
+            <select id="jp-extra-type" class="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-rose-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-rose-500">
+              <option value="ebook">📕 E-book / PDF</option>
+              <option value="youtube">🎧 Canal YouTube</option>
+              <option value="app">📱 App / Site</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-3">
+            <label for="jp-extra-notes" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Observações / Como usar</label>
+            <input type="text" id="jp-extra-notes" placeholder="Ex: 15 min antes de dormir / revisão N5..." class="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-rose-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-rose-500" />
+          </div>
+
+          <div class="md:col-span-2 flex items-end">
+            <button type="submit" class="w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition">
+              + Adicionar
+            </button>
+          </div>
+        </form>
+
+        <!-- Lista de Materiais Extras de Japonês -->
+        <div id="jp-extras-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      </div>
+
+      <!-- Seção Editável: Meus Materiais de Coreano e Inglês -->
+      <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div>
+          <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">
+            ✏️ Meus Materiais de Coreano e Inglês (Editável)
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            Quando você decidir os canais, apps e e-books de Coreano e Inglês, preencha abaixo. Tudo é salvo automaticamente e atualiza sua Grade Visual de Terça e Quinta na Fase 2!
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Coreano -->
+          <div class="p-4 rounded-2xl bg-sky-50/60 dark:bg-sky-950/25 border border-sky-200/80 dark:border-sky-800/60 space-y-3">
+            <div class="font-extrabold text-sm text-sky-800 dark:text-sky-300">🇰🇷 Materiais de Coreano (Fase 2 — Sem. 7+)</div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">E-book / Livro Principal</label>
+              <input type="text" id="slot-kr-ebook" oninput="updateLangSlot('kr', 'ebook', this.value)" placeholder="Ex: Sejong Korean 1 / Korean Grammar in Use..." class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Canais do YouTube</label>
+              <input type="text" id="slot-kr-youtube" oninput="updateLangSlot('kr', 'youtube', this.value)" placeholder="Ex: Coreano Online, Comprehensible Input Korean..." class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Aplicativos de Prática</label>
+              <input type="text" id="slot-kr-apps" oninput="updateLangSlot('kr', 'apps', this.value)" placeholder="Ex: Drops Coreano, Write It! Korean, LingoDeer..." class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700" />
+            </div>
+          </div>
+
+          <!-- Inglês -->
+          <div class="p-4 rounded-2xl bg-pink-50/60 dark:bg-pink-950/25 border border-pink-200/80 dark:border-pink-800/60 space-y-3">
+            <div class="font-extrabold text-sm text-pink-800 dark:text-pink-300">🇺🇸 Materiais de Inglês (Fase 2 — Sem. 7+)</div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">E-book / Gramática & Leitura</label>
+              <input type="text" id="slot-en-ebook" oninput="updateLangSlot('en', 'ebook', this.value)" placeholder="Ex: English Grammar in Use / Graded Readers..." class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-pink-200 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Canais do YouTube</label>
+              <input type="text" id="slot-en-youtube" oninput="updateLangSlot('en', 'youtube', this.value)" placeholder="Ex: English with Lucy, BBC Learning English..." class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-pink-200 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Aplicativos de Prática</label>
+              <input type="text" id="slot-en-apps" oninput="updateLangSlot('en', 'apps', this.value)" placeholder="Ex: Drops Inglês, Cake, Anki..." class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-pink-200 dark:border-slate-700" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ABA 6: MÉTRICAS & EVOLUÇÃO                                            -->
+    <!-- ===================================================================== -->
+    <section id="view-metrics" class="hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Tarefas Concluídas</div>
+          <div id="metric-tasks-done" class="text-2xl sm:text-3xl font-extrabold mt-1">0 / 0</div>
+          <div id="metric-tasks-pct" class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mt-1">0% do plano anual</div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Livros Base Japonês</div>
+          <div id="metric-books-summary" class="text-base sm:text-lg font-extrabold text-indigo-600 dark:text-indigo-400 mt-1">Irodori 0/18 • Genki 0/12</div>
+          <div id="metric-taekim-sub" class="text-xs text-amber-600 dark:text-amber-400 font-semibold mt-1">Tae Kim: 0/30 módulos</div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Questões Resolvidas</div>
+          <div id="metric-questions-total" class="text-2xl sm:text-3xl font-extrabold mt-1">0</div>
+          <div id="metric-questions-correct" class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-1">0 acertos registrados</div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Precisão Média</div>
+          <div id="metric-accuracy-rate" class="text-2xl sm:text-3xl font-extrabold mt-1">—</div>
+          <div class="text-xs text-slate-500 mt-1">Meta recomendada: ≥ 80%</div>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <h3 class="text-lg font-bold">Progresso por Material</h3>
+        <div id="material-progress-bars" class="space-y-4"></div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <h3 class="text-lg font-bold">Desempenho em Exercícios por Semana</h3>
+        <div id="performance-history-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 py-5 px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+    Plano Poliglota 54 Semanas + Irodori A1 + Genki 1 + Guia Tae Kim (21/11/2026 – 01/12/2027) • Dados salvos automaticamente no navegador.
+  </footer>
+
+  <script>
+    // =========================================================================
+    // 1. DADOS OFICIAIS DO IRODORI A1 (18 LIÇÕES / PÁGINAS 13 A 464)
+    // =========================================================================
+    const IRODORI_LESSONS = [
+      { id: 1, topicNum: 1, topicTitle: "Tópico 1: Encontros (出会い)", title: "Lição 1: Prazer em conhecê-lo (はじめまして)", pages: "Págs. 21–42", weekRef: 1, cando: "Cumprimentar, apresentar-se dizendo nome, país/origem e idiomas que fala.", grammar: "A は B です / じゃありません • Partícula も • Perguntas com か" },
+      { id: 2, topicNum: 1, topicTitle: "Tópico 1: Encontros (出会い)", title: "Lição 2: Qual é o seu trabalho? (お仕事は何ですか)", pages: "Págs. 43–64", weekRef: 2, cando: "Perguntar e responder sobre profissão, ocupação e hobbies básicos.", grammar: "Partícula の • Demonstrativos これ / それ / あれ • Verbo できます" },
+      { id: 3, topicNum: 2, topicTitle: "Tópico 2: Comida e Refeições (食べ物と食事)", title: "Lição 3: O que você gosta de comer? (何が好きですか)", pages: "Págs. 65–88", weekRef: 3, cando: "Falar sobre comidas e bebidas favoritas ou restrições alimentares.", grammar: "N が 好きです / 嫌いです • N を 食べます・飲みます" },
+      { id: 4, topicNum: 2, topicTitle: "Tópico 2: Comida e Refeições (食べ物と食事)", title: "Lição 4: Vamos almoçar fora (昼ごはんを食べに行きましょう)", pages: "Págs. 89–112", weekRef: 4, cando: "Fazer pedidos em restaurante, dizer quantidades e pedir a conta.", grammar: "Contadores (ひとつ, ふたつ...) • 〜を ください / お願いします" },
+      { id: 5, topicNum: 3, topicTitle: "Tópico 3: Casa (家)", title: "Lição 5: Em que tipo de casa você mora? (どんな家に住んでいますか)", pages: "Págs. 113–136", weekRef: 5, cando: "Descrever cômodos, móveis e características da casa.", grammar: "Adjetivos -i e -na • Lugar に N が あります / います" },
+      { id: 6, topicNum: 3, topicTitle: "Tópico 3: Casa (家)", title: "Lição 6: Pode entrar (どうぞお上がりください)", pages: "Págs. 137–158", weekRef: 6, cando: "Receber visitas, oferecer bebidas e pedir permissão.", grammar: "Forma て + ください • 〜ても いいですか" },
+      { id: 7, topicNum: 4, topicTitle: "Tópico 4: Cotidiano (毎日の生活)", title: "Lição 7: A que horas você acorda? (何時に起きますか)", pages: "Págs. 159–182", weekRef: 7, cando: "Falar sobre horários da rotina diária (acordar, trabalhar, dormir).", grammar: "Horas (〜じ 〜ふん) • Tempo に Verbo ます" },
+      { id: 8, topicNum: 4, topicTitle: "Tópico 4: Cotidiano (毎日の生活)", title: "Lição 8: Como é sua folga? (休みの日はどうですか)", pages: "Págs. 183–206", weekRef: 8, cando: "Relatar o que fez no fim de semana e expressar impressões.", grammar: "Passado 〜ました / 〜ませんでした / 〜かったです" },
+      { id: 9, topicNum: 5, topicTitle: "Tópico 5: Idiomas (ことば)", title: "Lição 9: Qual é o significado? (どういう意味ですか)", pages: "Págs. 207–230", weekRef: 9, cando: "Perguntar como se diz ou lê algo em japonês e tirar dúvidas.", grammar: "〜は 日本語で 何ですか • 〜と 言います" },
+      { id: 10, topicNum: 5, topicTitle: "Tópico 5: Idiomas (ことば)", title: "Lição 10: Tem aula de japonês? (日本語の教室がありますか)", pages: "Págs. 231–254", weekRef: 10, cando: "Perguntar dias, horários e locais de aulas ou eventos.", grammar: "Dias da semana • 〜から 〜まで" },
+      { id: 11, topicNum: 6, topicTitle: "Tópico 6: Sair Juntos (いっしょに出かける)", title: "Lição 11: Vamos sair juntos? (いっしょに出かけませんか)", pages: "Págs. 255–278", weekRef: 11, cando: "Convidar amigos, aceitar/recusar e combinar ponto de encontro.", grammar: "Convite 〜ませんか / 〜ましょう" },
+      { id: 12, topicNum: 6, topicTitle: "Tópico 6: Sair Juntos (いっしょに出かける)", title: "Lição 12: Onde fica a estação? (駅はどこですか)", pages: "Págs. 279–302", weekRef: 12, cando: "Pedir e dar direções básicas na rua e falar de transporte.", grammar: "Posições (前, 後ろ, 隣) • Transporte で 行きます" },
+      { id: 13, topicNum: 7, topicTitle: "Tópico 7: Compras (買い物)", title: "Lição 13: Quero comprar um presente (プレゼントを買いたいです)", pages: "Págs. 303–326", weekRef: 13, cando: "Expressar desejo de compra e perguntar preços em lojas.", grammar: "Forma 〜たいです • いくらですか" },
+      { id: 14, topicNum: 7, topicTitle: "Tópico 7: Compras (買い物)", title: "Lição 14: Tem um menor? (もう少し小さいのはありますか)", pages: "Págs. 327–350", weekRef: 14, cando: "Escolher tamanhos, cores e comentar sobre roupas/objetos.", grammar: "Adjetivo + の • どうですか" },
+      { id: 15, topicNum: 8, topicTitle: "Tópico 8: Lazer e Viagens (休みと旅行)", title: "Lição 15: Foi muito divertido (とても楽しかったです)", pages: "Págs. 351–374", weekRef: 15, cando: "Descrever impressões sobre viagens, passeios e eventos.", grammar: "Passado de adjetivos -na e substantivos (でした)" },
+      { id: 16, topicNum: 8, topicTitle: "Tópico 8: Lazer e Viagens (休みと旅行)", title: "Lição 16: Quero ir a Kyoto (京都に行きたいです)", pages: "Págs. 375–398", weekRef: 16, cando: "Falar sobre planos futuros e atividades variadas nas férias.", grammar: "Lugar に 行きたいです • 〜たり 〜たり します" },
+      { id: 17, topicNum: 9, topicTitle: "Tópico 9: Saúde (健康)", title: "Lição 17: Não estou me sentindo bem (具合が悪いです)", pages: "Págs. 399–428", weekRef: 17, cando: "Descrever sintomas físicos (febre, dor) e pedir ajuda médica.", grammar: "Partes do corpo が 痛いです • 熱が あります" },
+      { id: 18, topicNum: 9, topicTitle: "Tópico 9: Saúde (健康)", title: "Lição 18: Melhoras! (お大事に)", pages: "Págs. 429–464", weekRef: 18, cando: "Entender orientações médicas sobre repouso e remédios.", grammar: "Forma ないで ください • 〜たほうがいいです" }
+    ];
+
+    // =========================================================================
+    // 1B. DADOS OFICIAIS DO GENKI 1 (3ª EDIÇÃO — 12 LIÇÕES)
+    // =========================================================================
+    const GENKI_LESSONS = [
+      { id: 1, title: "Lição 1: Novos Amigos (あたらしいともだち)", weeks: "Semanas 1–2", theme: "Cumprimentos, apresentações pessoais, universidade, nacionalidade, idade e horários.", grammar: "X は Y です • Perguntas com か • Partícula の (posse/pertencimento)", vocab: "Saudações, países, áreas de estudo, profissões, números (0–100) e horas.", reading: "Hiragana completo (あ〜ん, dakuten, combinações e consoantes duplas)" },
+      { id: 2, title: "Lição 2: Compras (かいもの)", weeks: "Semanas 3–4", theme: "Identificar objetos próximos e distantes, perguntar preços e pedir itens em lojas.", grammar: "これ・それ・あれ • この・その・あの + Substantivo • ここ・そこ・あそこ • だれの • Partícula も • じゃないです", vocab: "Objetos cotidianos, comidas/bebidas de café, lugares na cidade e números grandes (100–90.000).", reading: "Katakana completo (ア〜ン e sons estrangeiros)" },
+      { id: 3, title: "Lição 3: Marcando um Encontro (デートのやくそく)", weeks: "Semanas 5–6", theme: "Falar sobre rotina diária, convidar alguém para sair e recusar com educação.", grammar: "Conjugação de verbos (grupos U, RU e irregulares) na forma ます / ません • Partículas を, で, に, へ • Convite 〜ませんか • Advérbios de frequência", vocab: "Verbos de ação cotidiana, dias da semana, expressões de tempo e locais de lazer.", reading: "15 Kanjis iniciais: 一 二 三 四 五 六 七 八 九 十 百 千 万 円 時" },
+      { id: 4, title: "Lição 4: O Primeiro Encontro (はじめてのデート)", weeks: "Semanas 7–8", theme: "Descrever onde coisas e pessoas estão e relatar eventos no passado.", grammar: "Verbos あります (inanimados) e います (seres vivos) • Palavras de localização (上, 下, 前, 後ろ, 中, 隣) • Passado ました / ませんでした • Partícula と", vocab: "Lugares na cidade, palavras de posição, meses, dias do mês e atividades de fim de semana.", reading: "14 Kanjis: 日 本 人 月 火 水 木 金 土 曜 上 下 中 半" },
+      { id: 5, title: "Lição 5: Uma Viagem a Okinawa (おきなわりょこう)", weeks: "Semanas 9–10", theme: "Descrever viagens, clima, pessoas e lugares usando adjetivos no presente e passado.", grammar: "Adjetivos -i e -na (presente afirmativo/negativo e passado) • Adjetivos modificando substantivos • 好き(な) / 嫌い(な) • ましょう / ましょうか • Contadores (〜まい)", vocab: "Adjetivos descritivos, clima, estações do ano, atividades de viagem e praia.", reading: "14 Kanjis: 山 川 元 気 天 私 今 田 女 男 見 行 食 飲" },
+      { id: 6, title: "Lição 6: Um Dia na Vida de Robert (ロバートさんのいちにち)", weeks: "Semanas 11–12", theme: "Fazer pedidos polidos, pedir/conceder permissão e explicar motivos.", grammar: "Forma て (regra completa de conjugação) • 〜てください • 〜てもいいです • 〜てはいけません • Conectando frases com 〜て • 〜から (razão)", vocab: "Verbos de rotina, regras de sala de aula, transporte e direções.", reading: "15 Kanjis: 東 西 南 北 口 出 右 左 分 先 生 大 学 外 国" },
+      { id: 7, title: "Lição 7: Foto de Família (かぞくのしゃしん)", weeks: "Semanas 13–14", theme: "Descrever aparência física de pessoas, roupas, família e ações em andamento.", grammar: "〜ている (ação em progresso e estado resultante) • Característica física (X は Y が Adjetivo) • Forma て de adjetivos e substantivos • Contador de pessoas (ひとり, ふたり...)", vocab: "Membros da família, partes do corpo, roupas, acessórios e verbos de vestir.", reading: "14 Kanjis: 京 子 小 会 社 父 母 高 校 毎 語 文 帰 入" },
+      { id: 8, title: "Lição 8: Churrasco (バーベキュー)", weeks: "Semanas 15–16", theme: "Conversar informalmente com amigos, expressar opiniões e citar o que alguém disse.", grammar: "Formas Curtas (Dicionário e ない — presente informal) • 〜と思います (acho que) • 〜と言っていました (disse que) • 〜ないでください • 何も / 誰も", vocab: "Comidas de churrasco, hobbies, esportes e expressões informais.", reading: "14 Kanjis: 員 新 聞 作 仕 事 電 車 休 言 読 思 次 何" },
+      { id: 9, title: "Lição 9: Kabuki (かぶき)", weeks: "Semanas 17–18", theme: "Contar experiências passadas de forma informal e qualificar substantivos com verbos.", grammar: "Formas Curtas no Passado (た / なかった) • Qualificando substantivos com orações • もう〜ました / まだ〜ていません • 〜から (explicação)", vocab: "Artes tradicionais, entretenimento, cores e adjetivos de opinião.", reading: "15 Kanjis: 午 後 前 名 白 雨 書 友 間 家 話 少 古 知 来" },
+      { id: 10, title: "Lição 10: Planos para as Férias de Inverno (ふゆやすみのよてい)", weeks: "Semanas 19–20", theme: "Comparar coisas, falar sobre planos futuros e meios de transporte.", grammar: "Comparativos (A のほうが B より...) e Superlativos (一番) • つもりだ (pretendo) • Adjetivo + なる (tornar-se) • どこかに / どこにも • Meio de transporte (〜で)", vocab: "Viagens, meios de transporte, estações e planejamento de férias.", reading: "14 Kanjis: 住 正 年 売 買 町 長 道 雪 立 自 夜 朝 持" },
+      { id: 11, title: "Lição 11: Depois das Férias (やすみのあと)", weeks: "Semanas 21–22", theme: "Expressar desejos, listar experiências passadas e apresentar-se com naturalidade.", grammar: "〜たい (quero fazer) • 〜たり〜たりする (fazer coisas como X e Y) • 〜ことがある (já tive a experiência de) • Partícula や (exemplos não exaustivos)", vocab: "Ocupações futuras, atividades culturais, festivais e verbos variados.", reading: "15 Kanjis: 手 紙 好 近 明 病 院 映 画 歌 市 所 勉 強 有 旅" },
+      { id: 12, title: "Lição 12: Sentindo-se Mal (びょうき)", weeks: "Semanas 23–24", theme: "Descrever sintomas de saúde, dar conselhos e explicar situações.", grammar: "〜んです (explicação/ênfase) • 〜すぎる (em excesso) • 〜ほうがいいです (é melhor fazer) • 〜ので (causa formal) • 〜なければいけません (ter que)", vocab: "Sintomas médicos, doenças comuns, remédios e cuidados com a saúde.", reading: "15 Kanjis finais do Genki 1: 昔 々 神 早 起 牛 使 働 連 別 度 赤 青 色" }
+    ];
+
+    // =========================================================================
+    // 1C. DADOS OFICIAIS DO GUIA DE GRAMÁTICA DO TAE KIM (EM PORTUGUÊS — 30 MÓDULOS)
+    // =========================================================================
+    const TAEKIM_MODULES = [
+      { id: 1, section: "1. Sistema de Escrita", title: "Hiragana (ひらがな)", genkiRef: "Genki 1 Cap. 1", desc: "Sons vocálicos e consonantais básicos, dakuten, handakuten, pequenos ゃ/ゅ/ょ e pequeno っ." },
+      { id: 2, section: "1. Sistema de Escrita", title: "Katakana (カタカナ)", genkiRef: "Genki 1 Cap. 2", desc: "Silabário para palavras estrangeiras, vogais longas com ー e combinações especiais (ファ, ティ, ヴァ)." },
+      { id: 3, section: "1. Sistema de Escrita", title: "Kanji (漢字)", genkiRef: "Genki 1 Caps. 3–12", desc: "Leituras On'yomi e Kun'yomi, ordem de traços e estratégia para aprender Kanji em vocabulário." },
+      { id: 4, section: "2. Gramática Básica", title: "Expressando Estado-de-Ser (だ / じゃない)", genkiRef: "Genki 1 Caps. 1–2", desc: "Declarar que algo é ou não é (forma simples sem です), passado (だった) e negativo passado (じゃなかった)." },
+      { id: 5, section: "2. Gramática Básica", title: "Introdução às Partículas (は, も, が)", genkiRef: "Genki 1 Caps. 1–2", desc: "Diferença essencial entre は (marcador de tópico), も (inclusivo 'também') e が (identificador de sujeito)." },
+      { id: 6, section: "2. Gramática Básica", title: "Adjetivos (-i e -na)", genkiRef: "Genki 1 Cap. 5", desc: "Conjugação de adjetivos -na e -i no presente, negativo, passado e passado negativo, além da exceção いい." },
+      { id: 7, section: "2. Gramática Básica", title: "Conceitos Básicos de Verbos (Ru e U)", genkiRef: "Genki 1 Cap. 3", desc: "Classificação real dos verbos em verbos-Ru, verbos-U e irregulares (する e 来る) na forma de dicionário." },
+      { id: 8, section: "2. Gramática Básica", title: "Verbos Negativos (〜ない)", genkiRef: "Genki 1 Cap. 8", desc: "Como conjugar verbos-Ru, verbos-U e irregulares para a forma negativa simples." },
+      { id: 9, section: "2. Gramática Básica", title: "Tempo Passado (〜た / 〜なかった)", genkiRef: "Genki 1 Cap. 9", desc: "Conjugação para o passado afirmativo e passado negativo na forma simples." },
+      { id: 10, section: "2. Gramática Básica", title: "Partículas Usadas com Verbos (を, に, へ, で)", genkiRef: "Genki 1 Caps. 3–4", desc: "Objeto direto (を), alvo/destino/tempo (に e へ), local da ação/meio (で) e contraste com は." },
+      { id: 11, section: "2. Gramática Básica", title: "Verbos Transitivos e Intransitivos", genkiRef: "Genki 1–2 (Ponte)", desc: "Pares de verbos onde o sujeito sofre a ação vs. onde um agente age sobre um objeto (ex: 開く vs 開ける)." },
+      { id: 12, section: "2. Gramática Básica", title: "Orações Relativas e Ordem das Palavras", genkiRef: "Genki 1 Cap. 9", desc: "Como usar verbos e adjetivos inteiros antes de substantivos para descrevê-los sem pronome relativo." },
+      { id: 13, section: "2. Gramática Básica", title: "Partículas Relacionadas a Substantivos (と, や, の)", genkiRef: "Genki 1 Caps. 2, 4, 11", desc: "Listagem completa (と), listagem parcial (や), posse/explicação (の) e nominalização com の." },
+      { id: 14, section: "2. Gramática Básica", title: "Usando Advérbios e Gobi (よ e ね)", genkiRef: "Genki 1 Caps. 1–5", desc: "Transformar adjetivos em advérbios (〜く / 〜に) e nuances das partículas finais よ e ね." },
+      { id: 15, section: "3. Gramática Essencial", title: "Frases Polidas e Forma ます", genkiRef: "Genki 1 Cap. 3", desc: "Base do verbo (stem) e conjugação para 〜ます, 〜ません, 〜ました e 〜ませんでした, além de です." },
+      { id: 16, section: "3. Gramática Essencial", title: "Dirigindo-se às Pessoas", genkiRef: "Genki 1 Cap. 1", desc: "Sufixos honoríficos (〜さん, 〜ちゃん, 〜くん, 〜先生) e uso natural de pronomes em japonês." },
+      { id: 17, section: "3. Gramática Essencial", title: "A Partícula de Pergunta (か)", genkiRef: "Genki 1 Caps. 1, 10", desc: "Perguntas polidas vs. informais, か em orações embutidas e palavras interrogativas + か/も." },
+      { id: 18, section: "3. Gramática Essencial", title: "Frases Compostas (Forma て, から, ので, けど)", genkiRef: "Genki 1 Caps. 6, 12", desc: "Encadeamento de ações com a forma て, motivos com から/ので e contraste com が/けど." },
+      { id: 19, section: "3. Gramática Essencial", title: "Outros Usos da Forma て (〜ている, 〜てある, 〜ておく)", genkiRef: "Genki 1 Cap. 7", desc: "Ação contínua/estado resultante (〜ている), estado preparado (〜てある) e ação preparatória (〜ておく)." },
+      { id: 20, section: "3. Gramática Essencial", title: "Forma Potencial (Poder / Conseguir fazer)", genkiRef: "Genki 2 Cap. 13", desc: "Conjugação potencial (〜られる / 〜える), できる e uso da partícula が em vez de を." },
+      { id: 21, section: "3. Gramática Essencial", title: "Usando する e なる com a Partícula に", genkiRef: "Genki 1 Cap. 10", desc: "Expressar mudança de estado ('tornar-se' com 〜くなる / 〜になる) e 'fazer ficar' (〜くする / 〜にする)." },
+      { id: 22, section: "3. Gramática Essencial", title: "Condicionais (と, なら, ば, たら)", genkiRef: "Genki 2 Cap. 17", desc: "As quatro formas de dizer 'se' em japonês e quando cada uma é mais natural." },
+      { id: 23, section: "3. Gramática Essencial", title: "Expressando 'Ter que' ou 'Precisar'", genkiRef: "Genki 1 Cap. 12", desc: "Estruturas 〜だめ, 〜いけない, 〜ならない e atalhos falados (〜なきゃ / 〜なくちゃ)." },
+      { id: 24, section: "3. Gramática Essencial", title: "Desejo e Sugestões (〜たい, ほしい, Forma Volitiva)", genkiRef: "Genki 1 Cap. 11", desc: "Querer fazer (〜たい), querer algo (ほしい), forma volitiva (〜よう / 〜おう) e fazer sugestões." },
+      { id: 25, section: "3. Gramática Essencial", title: "Agindo sobre Orações Relativas (という)", genkiRef: "Genki 1 Cap. 8", desc: "Citar pensamentos e falas com と (〜と思う, 〜と言う) e definir termos com という." },
+      { id: 26, section: "3. Gramática Essencial", title: "Definindo e Descrevendo (ようだ / みたい)", genkiRef: "Genki 2 Cap. 17", desc: "Expressar aparência ou semelhança ('parece que / como se') com ようだ e みたい." },
+      { id: 27, section: "3. Gramática Essencial", title: "Tentando ou Experimentando (〜てみる / Volitiva + とする)", genkiRef: "Genki 2 Cap. 13", desc: "Diferença entre experimentar fazer algo (〜てみる) e tentar realizar algo (〜ようとする)." },
+      { id: 28, section: "3. Gramática Essencial", title: "Dar e Receber (あげる, くれる, もらう)", genkiRef: "Genki 2 Cap. 14", desc: "Direção da ação e favores usando 〜てあげる, 〜てくれる e 〜てもらう." },
+      { id: 29, section: "3. Gramática Essencial", title: "Fazendo Pedidos (〜てください, 〜ちょうだい, 〜なさい)", genkiRef: "Genki 1 Cap. 6", desc: "Graus de polidez ao pedir algo e imperativo suave 〜なさい." },
+      { id: 30, section: "3. Gramática Essencial", title: "Números e Contadores", genkiRef: "Genki 1 Caps. 1–7", desc: "Sistema numérico japonês (万, 億), contadores essenciais (つ, 人, 本, 枚, 匹) e datas/horas." }
+    ];
+
+    const MATERIAL_META = {
+      irodori:   { label: "Irodori A1",   icon: "📕", badgeClass: "bg-rose-100 text-rose-800 dark:bg-rose-950/90 dark:text-rose-300 border border-rose-300/80 dark:border-rose-700/70", barColor: "bg-rose-500" },
+      genki:     { label: "Genki 1",      icon: "📘", badgeClass: "bg-indigo-100 text-indigo-800 dark:bg-indigo-950/90 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800", barColor: "bg-indigo-500" },
+      taekim:    { label: "Guia Tae Kim", icon: "📙", badgeClass: "bg-amber-100 text-amber-800 dark:bg-amber-950/90 dark:text-amber-300 border border-amber-200 dark:border-amber-800", barColor: "bg-amber-500" },
+      immersion: { label: "Imersão / YT", icon: "🎧", badgeClass: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/90 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800", barColor: "bg-emerald-500" },
+      apps:      { label: "Apps / Kana",  icon: "📱", badgeClass: "bg-violet-100 text-violet-800 dark:bg-violet-950/90 dark:text-violet-300 border border-violet-200 dark:border-violet-800", barColor: "bg-violet-500" },
+      korean:    { label: "Coreano",      icon: "🇰🇷", badgeClass: "bg-sky-100 text-sky-800 dark:bg-sky-950/90 dark:text-sky-300 border border-sky-200 dark:border-sky-800", barColor: "bg-sky-500" },
+      english:   { label: "Inglês",       icon: "🇺🇸", badgeClass: "bg-pink-100 text-pink-800 dark:bg-pink-950/90 dark:text-pink-300 border border-pink-200 dark:border-pink-800", barColor: "bg-pink-500" }
+    };
+
+    const JP_EXTRA_TYPES = {
+      ebook:   { label: "E-book / PDF",  icon: "📕", badgeClass: "bg-rose-100 text-rose-800 dark:bg-rose-950/90 dark:text-rose-300 border border-rose-200 dark:border-rose-800" },
+      youtube: { label: "Canal YouTube", icon: "🎧", badgeClass: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/90 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800" },
+      app:     { label: "App / Site",    icon: "📱", badgeClass: "bg-violet-100 text-violet-800 dark:bg-violet-950/90 dark:text-violet-300 border border-violet-200 dark:border-violet-800" }
+    };
+
+    // =========================================================================
+    // 2. GERAÇÃO DAS 54 SEMANAS (21/11/2026 A 01/12/2027)
+    // =========================================================================
+    function formatDateBR(d) {
+      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    function generate54Weeks() {
+      const startDate = new Date(2026, 10, 21); // 21/11/2026
+      const weeks = [];
+
+      const earlyWeeks = {
+        1: {
+          title: "Hiragana Base + Irodori Sala de Aula & Lição 1 + Genki 1 Cap. 1",
+          tasks: [
+            { id: "w1_t1", mat: "irodori", lang: "jp", text: "Irodori A1: Expressões de Sala de Aula + Lição 1 'Prazer em conhecê-lo' (Págs. 13–42 + Áudios)" },
+            { id: "w1_t2", mat: "apps", lang: "jp", text: "Hiragana (あ〜そ): traçado no Write Japanese + 15 min/dia no Drops" },
+            { id: "w1_t3", mat: "genki", lang: "jp", text: "Genki 1 Cap. 1 (Parte 1): Saudações, números e estrutura X は Y です" },
+            { id: "w1_t4", mat: "taekim", lang: "jp", text: "Guia Tae Kim: Sistema de Escrita (Hiragana) e Expressando Estado-de-Ser" },
+            { id: "w1_t5", mat: "immersion", lang: "jp", text: "Imersão: 2 vídeos curtos Comprehensible Japanese (Nível Zero) + Japanese with Lily" }
+          ]
+        },
+        2: {
+          title: "Hiragana Completo + Irodori Lição 2 + Genki 1 Cap. 1 (Workbook)",
+          tasks: [
+            { id: "w2_t1", mat: "irodori", lang: "jp", text: "Irodori A1: Lição 2 'Qual é o seu trabalho?' (Págs. 43–64 + Áudios e Shadowing)" },
+            { id: "w2_t2", mat: "apps", lang: "jp", text: "Hiragana completo (た〜ん + dakuten): leitura fluente sem romaji" },
+            { id: "w2_t3", mat: "genki", lang: "jp", text: "Genki 1 Cap. 1 (Parte 2) + Exercícios completos do Workbook Cap. 1" },
+            { id: "w2_t4", mat: "taekim", lang: "jp", text: "Guia Tae Kim: Introdução às Partículas (は, も, が)" },
+            { id: "w2_t5", mat: "immersion", lang: "jp", text: "Imersão: Japanese Super Immersion + Shadowing Lição 2 Irodori" }
+          ]
+        },
+        3: {
+          title: "Katakana Base + Irodori Lição 3 + Genki 1 Cap. 2",
+          tasks: [
+            { id: "w3_t1", mat: "irodori", lang: "jp", text: "Irodori A1: Lição 3 'O que você gosta de comer?' (Págs. 65–88 + Áudios)" },
+            { id: "w3_t2", mat: "apps", lang: "jp", text: "Katakana (ア〜ソ): leitura de palavras estrangeiras no Drops e Write Japanese" },
+            { id: "w3_t3", mat: "genki", lang: "jp", text: "Genki 1 Cap. 2: Demonstrativos これ・それ・あれ e partícula の" },
+            { id: "w3_t4", mat: "taekim", lang: "jp", text: "Guia Tae Kim: Katakana + Demonstrativos e posse" },
+            { id: "w3_t5", mat: "immersion", lang: "jp", text: "Imersão: Japanese Online + Comprehensible Japanese" }
+          ]
+        },
+        4: {
+          title: "Katakana Completo + Irodori Lição 4 + Genki 1 Cap. 2 (Workbook)",
+          tasks: [
+            { id: "w4_t1", mat: "irodori", lang: "jp", text: "Irodori A1: Lição 4 'Vamos almoçar fora' (Págs. 89–112 + Áudios)" },
+            { id: "w4_t2", mat: "apps", lang: "jp", text: "Katakana completo (タ〜ン + sons combinados) + revisão mista Kana" },
+            { id: "w4_t3", mat: "genki", lang: "jp", text: "Genki 1 Cap. 2: Workbook completo + leitura inicial" },
+            { id: "w4_t4", mat: "taekim", lang: "jp", text: "Guia Tae Kim: Revisão de substantivos e partículas básicas" },
+            { id: "w4_t5", mat: "immersion", lang: "jp", text: "Imersão: Diálogos de restaurante no Japanese with Lily" }
+          ]
+        },
+        5: {
+          title: "Primeiros Kanjis + Irodori Lição 5 + Genki 1 Cap. 3 (Verbos)",
+          tasks: [
+            { id: "w5_t1", mat: "irodori", lang: "jp", text: "Irodori A1: Lição 5 'Em que tipo de casa você mora?' (Págs. 113–136 + Áudios)" },
+            { id: "w5_t2", mat: "apps", lang: "jp", text: "App Kanji: primeiros 15 Kanjis (números 1–10, dia, mês, pessoa, livro)" },
+            { id: "w5_t3", mat: "genki", lang: "jp", text: "Genki 1 Cap. 3: Verbos na forma ます, partículas を, に, で, へ" },
+            { id: "w5_t4", mat: "taekim", lang: "jp", text: "Guia Tae Kim: Conceitos básicos de verbos e partículas de ação" },
+            { id: "w5_t5", mat: "immersion", lang: "jp", text: "Imersão: Comprehensible Japanese (rotina e objetos)" }
+          ]
+        },
+        6: {
+          title: "Fechamento Fase 1 + Irodori Lição 6 + Genki 1 Cap. 3 (Fim)",
+          tasks: [
+            { id: "w6_t1", mat: "irodori", lang: "jp", text: "Irodori A1: Lição 6 'Pode entrar' (Págs. 137–158 + Áudios)" },
+            { id: "w6_t2", mat: "apps", lang: "jp", text: "Revisão geral de Hiragana, Katakana e 25 Kanjis no Drops/Kanji" },
+            { id: "w6_t3", mat: "genki", lang: "jp", text: "Genki 1 Cap. 3 Workbook + revisão consolidada Caps. 1–3" },
+            { id: "w6_t4", mat: "taekim", lang: "jp", text: "Guia Tae Kim: Partículas de movimento e tempo" },
+            { id: "w6_t5", mat: "immersion", lang: "jp", text: "Imersão: Japanese Super Immersion — revisão auditiva Fase 1" }
+          ]
+        }
+      };
+
+      for (let w = 1; w <= 54; w++) {
+        const wStart = new Date(startDate);
+        wStart.setDate(startDate.getDate() + (w - 1) * 7);
+        const wEnd = new Date(wStart);
+        wEnd.setDate(wStart.getDate() + 6);
+        const phase = w <= 6 ? 1 : 2;
+        const dateRange = `${formatDateBR(wStart)} a ${formatDateBR(wEnd)}`;
+
+        if (earlyWeeks[w]) {
+          weeks.push({ week: w, phase, dateRange, title: earlyWeeks[w].title, tasks: earlyWeeks[w].tasks });
+        } else {
+          const irodoriLes = w <= 18 ? IRODORI_LESSONS[w - 1] : null;
+          const genkiCap = Math.min(12, Math.floor((w + 1) / 2));
+          const tasks = [];
+
+          if (irodoriLes) {
+            tasks.push({
+              id: `w${w}_t1`,
+              mat: "irodori",
+              lang: "jp",
+              text: `Irodori A1: ${irodoriLes.title} (${irodoriLes.pages} + Áudios e Shadowing)`
+            });
+          } else {
+            const revNum = ((w - 19) % 18) + 1;
+            tasks.push({
+              id: `w${w}_t1`,
+              mat: "irodori",
+              lang: "jp",
+              text: `Irodori A1: Revisão de shadowing e leitura rápida (Lição ${revNum})`
+            });
+          }
+
+          tasks.push({
+            id: `w${w}_t2`,
+            mat: "genki",
+            lang: "jp",
+            text: w <= 24
+              ? `Genki 1 Cap. ${genkiCap} (${w % 2 === 1 ? 'Gramática & Diálogo' : 'Workbook & Leitura'})`
+              : `Japonês A2 (Genki 2 / N4): Ciclo ${Math.floor((w - 25) / 4) + 1} — Gramática e Leitura`
+          });
+
+          tasks.push({
+            id: `w${w}_t3`,
+            mat: "taekim",
+            lang: "jp",
+            text: `Guia Tae Kim: Aprofundamento gramatical + imersão YouTube JP`
+          });
+
+          tasks.push({
+            id: `w${w}_t4`,
+            mat: "korean",
+            lang: "kr",
+            text: w === 7
+              ? "Coreano (Início Fase 2): Alfabeto Hangul + e-book/canal escolhidos na aba Rotina"
+              : `Coreano (Ter/Qui): Módulo ${w - 6} — E-book, YouTube e Apps de Coreano`
+          });
+
+          tasks.push({
+            id: `w${w}_t5`,
+            mat: "english",
+            lang: "en",
+            text: w === 7
+              ? "Inglês (Início Fase 2): Leitura ativa + escuta com seus materiais escolhidos"
+              : `Inglês (Ter/Qui): Módulo ${w - 6} — Leitura, Podcast/YouTube e Vocabulário`
+          });
+
+          weeks.push({
+            week: w,
+            phase: 2,
+            dateRange,
+            title: `${irodoriLes ? `Irodori Lição ${irodoriLes.id} + ` : ''}${w <= 24 ? `Genki 1 Cap. ${genkiCap}` : 'Japonês A2'} + Coreano & Inglês`,
+            tasks
+          });
+        }
+      }
+      return weeks;
+    }
+
+    const WEEKS_DATA = generate54Weeks();
+
+    // =========================================================================
+    // 3. ESTADO, CONFIGURAÇÃO DE CARGA HORÁRIA E PERSISTÊNCIA (LOCALSTORAGE)
+    // =========================================================================
+    const STORAGE_KEY = "poliglota_54w_irodori_v6";
+    const DEFAULT_SCHEDULE_CONFIG = {
+      dailyMinutes: 120,
+      allocUnit: "session",
+      sessionMinutes: { jp: 120, kr: 60, en: 60 }
+    };
+
+    let appState = {
+      completedTasks: {},
+      irodoriClassroom: false,
+      irodoriProgress: {},
+      genkiProgress: {},
+      taekimProgress: {},
+      weekNotes: {},
+      weekScores: {},
+      expandedWeeks: { "1": true },
+      langSlots: {
+        kr: { ebook: "", youtube: "", apps: "" },
+        en: { ebook: "", youtube: "", apps: "" }
+      },
+      jpExtraMaterials: [],
+      scheduleConfig: JSON.parse(JSON.stringify(DEFAULT_SCHEDULE_CONFIG)),
+      darkMode: false
+    };
+
+    let currentMaterialFilter = "all";
+    let dailyGridPhase = 1;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY)
+          || localStorage.getItem("poliglota_54w_irodori_v5")
+          || localStorage.getItem("poliglota_54w_irodori_v4")
+          || localStorage.getItem("poliglota_54w_irodori_v3");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState = {
+            ...appState,
+            ...parsed,
+            genkiProgress: parsed.genkiProgress || {},
+            taekimProgress: parsed.taekimProgress || {},
+            jpExtraMaterials: Array.isArray(parsed.jpExtraMaterials) ? parsed.jpExtraMaterials : [],
+            scheduleConfig: {
+              ...JSON.parse(JSON.stringify(DEFAULT_SCHEDULE_CONFIG)),
+              ...(parsed.scheduleConfig || {}),
+              sessionMinutes: {
+                ...DEFAULT_SCHEDULE_CONFIG.sessionMinutes,
+                ...(parsed.scheduleConfig?.sessionMinutes || {})
+              }
+            }
+          };
+        }
+      } catch (e) { console.error(e); }
+      document.documentElement.classList.toggle("dark", !!appState.darkMode);
+      document.getElementById("theme-icon").textContent = appState.darkMode ? "☀️" : "🌙";
+      updateHeaderSubtitle();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {}
+      updateHeaderSubtitle();
+      updateAllProgressUI();
+    }
+
+    function escapeHTML(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function formatHoursOrMinutes(mins) {
+      const m = Math.max(0, Math.round(Number(mins) || 0));
+      if (m === 0) return "0 min";
+      if (m < 60) return `${m} min`;
+      const h = m / 60;
+      return Number.isInteger(h) ? `${h}h` : `${h.toFixed(1).replace('.0', '')}h (${m}m)`;
+    }
+
+    function formatCompactDuration(mins) {
+      const m = Math.max(0, Math.round(Number(mins) || 0));
+      if (m < 60) return `${m}m`;
+      const h = Math.floor(m / 60);
+      const rem = m % 60;
+      return rem === 0 ? `${h}h` : `${h}h${String(rem).padStart(2, '0')}m`;
+    }
+
+    function getDailyBlocks(totalMins) {
+      const m = Math.max(30, Math.round(Number(totalMins) || 120));
+      const b1 = Math.round(m * 0.25);
+      const b3 = Math.round(m * 0.25);
+      const b2 = Math.max(10, m - b1 - b3);
+      return { b1, b2, b3, total: m };
+    }
+
+    function updateHeaderSubtitle() {
+      const mins = appState.scheduleConfig?.dailyMinutes || 120;
+      const hStr = Number.isInteger(mins / 60) ? `${mins / 60}h` : `${(mins / 60).toFixed(1)}h`;
+      const el = document.getElementById("header-subtitle");
+      if (el) {
+        el.textContent = `21/11/2026 a 01/12/2027 • ~${hStr}/dia (Seg–Sex) • Japonês, Coreano & Inglês`;
+      }
+    }
+
+    // =========================================================================
+    // 4. TOAST & MODAL DE CONFIRMAÇÃO
+    // =========================================================================
+    function showToast(msg, isError = false) {
+      const container = document.getElementById("toast-container");
+      const el = document.createElement("div");
+      el.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${isError ? 'bg-rose-600 text-white' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'}`;
+      el.textContent = msg;
+      container.appendChild(el);
+      setTimeout(() => { el.style.opacity = "0"; setTimeout(() => el.remove(), 300); }, 2600);
+    }
+
+    let confirmCb = null;
+    function openConfirm(title, msg, cb) {
+      document.getElementById("confirm-title").textContent = title;
+      document.getElementById("confirm-message").textContent = msg;
+      confirmCb = cb;
+      const m = document.getElementById("confirm-modal");
+      m.classList.remove("hidden");
+      m.classList.add("flex");
+    }
+    document.getElementById("confirm-cancel").onclick = () => {
+      const m = document.getElementById("confirm-modal");
+      m.classList.add("hidden"); m.classList.remove("flex"); confirmCb = null;
+    };
+    document.getElementById("confirm-ok").onclick = () => {
+      const m = document.getElementById("confirm-modal");
+      m.classList.add("hidden"); m.classList.remove("flex");
+      if (confirmCb) confirmCb(); confirmCb = null;
+    };
+
+    // =========================================================================
+    // 5. ABAS E TEMA
+    // =========================================================================
+    function switchTab(tab) {
+      ["schedule", "irodori", "genki", "taekim", "routine", "metrics"].forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tab) {
+          view.classList.remove("hidden");
+          btn.className = "tab-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-indigo-600 text-white shadow-sm";
+        } else {
+          view.classList.add("hidden");
+          btn.className = "tab-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200";
+        }
+      });
+      if (tab === "irodori") renderIrodoriPanel();
+      if (tab === "genki") renderGenkiPanel();
+      if (tab === "taekim") renderTaeKimPanel();
+      if (tab === "routine") renderRoutinePanel();
+      if (tab === "metrics") renderMetricsPanel();
+    }
+
+    function toggleDarkMode() {
+      appState.darkMode = !appState.darkMode;
+      document.documentElement.classList.toggle("dark", appState.darkMode);
+      document.getElementById("theme-icon").textContent = appState.darkMode ? "☀️" : "🌙";
+      saveState();
+    }
+
+    // =========================================================================
+    // 6. CRONOGRAMA (54 SEMANAS)
+    // =========================================================================
+    function setMaterialFilter(mat) {
+      currentMaterialFilter = mat;
+      document.querySelectorAll(".mat-pill").forEach(btn => {
+        const active = btn.getAttribute("data-mat") === mat;
+        btn.classList.toggle("ring-2", active);
+        btn.classList.toggle("ring-offset-2", active);
+        btn.classList.toggle("ring-indigo-500", active);
+      });
+      renderSchedule();
+    }
+
+    function toggleWeekExpand(w) {
+      appState.expandedWeeks[w] = !appState.expandedWeeks[w];
+      saveState();
+      renderSchedule();
+    }
+
+    function expandCollapseAll(open) {
+      WEEKS_DATA.forEach(w => { appState.expandedWeeks[w.week] = open; });
+      saveState();
+      renderSchedule();
+    }
+
+    function toggleTask(taskId, weekNum) {
+      appState.completedTasks[taskId] = !appState.completedTasks[taskId];
+      if (taskId.endsWith("_t1") && weekNum <= 18) {
+        if (!appState.irodoriProgress[weekNum]) appState.irodoriProgress[weekNum] = { study: false, audio: false, shadow: false };
+        appState.irodoriProgress[weekNum].study = !!appState.completedTasks[taskId];
+      }
+      saveState();
+      renderSchedule();
+    }
+
+    function updateWeekNote(w, val) {
+      appState.weekNotes[w] = val;
+      saveState();
+    }
+
+    function updateWeekScore(w, field, val) {
+      if (!appState.weekScores[w]) appState.weekScores[w] = { total: "", correct: "" };
+      appState.weekScores[w][field] = val === "" ? "" : Math.max(0, parseInt(val, 10) || 0);
+      saveState();
+      renderSchedule();
+    }
+
+    function getScoreBadge(sc) {
+      if (!sc || !sc.total || sc.total <= 0) return null;
+      const t = Number(sc.total), c = Math.min(t, Number(sc.correct || 0));
+      const pct = Math.round((c / t) * 100);
+      const cls = pct >= 80
+        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+        : pct >= 60
+          ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border-amber-200 dark:border-amber-800"
+          : "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border-rose-200 dark:border-rose-800";
+      return { pct, correct: c, total: t, cls };
+    }
+
+    function renderSchedule() {
+      const container = document.getElementById("weeks-container");
+      const q = document.getElementById("search-input").value.trim().toLowerCase();
+      const phase = document.getElementById("filter-phase").value;
+
+      const filtered = WEEKS_DATA.filter(w => {
+        if (phase !== "all" && String(w.phase) !== phase) return false;
+        if (currentMaterialFilter !== "all" && !w.tasks.some(t => t.mat === currentMaterialFilter)) return false;
+        if (q) {
+          const matchTitle = w.title.toLowerCase().includes(q) || `semana ${w.week}`.includes(q);
+          const matchTask = w.tasks.some(t => t.text.toLowerCase().includes(q));
+          const matchNote = (appState.weekNotes[w.week] || "").toLowerCase().includes(q);
+          if (!matchTitle && !matchTask && !matchNote) return false;
+        }
+        return true;
+      });
+
+      document.getElementById("schedule-count-label").textContent = `Exibindo ${filtered.length} de 54 semanas`;
+
+      container.innerHTML = filtered.map(w => {
+        const isOpen = !!appState.expandedWeeks[w.week];
+        const done = w.tasks.filter(t => appState.completedTasks[t.id]).length;
+        const tot = w.tasks.length;
+        const complete = done === tot && tot > 0;
+        const pct = tot ? Math.round((done / tot) * 100) : 0;
+        const sc = getScoreBadge(appState.weekScores[w.week]);
+
+        return `
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border ${complete ? 'border-emerald-300 dark:border-emerald-800' : 'border-slate-200 dark:border-slate-800'} shadow-sm overflow-hidden">
+            <button type="button" onclick="toggleWeekExpand(${w.week})" class="w-full text-left p-4 sm:px-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 rounded-xl flex flex-col items-center justify-center shrink-0 font-bold text-xs ${complete ? 'bg-emerald-500 text-white' : 'bg-indigo-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300'}">
+                  <span class="text-[10px] uppercase opacity-75">Sem</span>
+                  <span class="text-sm leading-none">${w.week}</span>
+                </div>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                    <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">${w.dateRange}</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${w.phase === 1 ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'}">Fase ${w.phase}</span>
+                    ${sc ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold border ${sc.cls}">Acertos: ${sc.pct}%</span>` : ''}
+                  </div>
+                  <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">${w.title}</h3>
+                </div>
+              </div>
+              <div class="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+                <div class="flex items-center gap-2">
+                  <div class="w-20 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div class="h-full ${complete ? 'bg-emerald-500' : 'bg-indigo-500'} rounded-full" style="width:${pct}%"></div>
+                  </div>
+                  <span class="text-xs font-bold">${done}/${tot}</span>
+                </div>
+                <span class="text-slate-400 text-sm">${isOpen ? '▲' : '▼'}</span>
+              </div>
+            </button>
+
+            ${isOpen ? `
+              <div class="p-4 sm:p-5 pt-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 space-y-4">
+                <div class="space-y-2">
+                  ${w.tasks.map(t => {
+                    const checked = !!appState.completedTasks[t.id];
+                    const meta = MATERIAL_META[t.mat];
+                    return `
+                      <label class="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/80 border ${checked ? 'border-emerald-200 dark:border-emerald-800/60 opacity-75' : 'border-slate-200/80 dark:border-slate-700'} cursor-pointer transition select-none">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTask('${t.id}', ${w.week})" class="mt-0.5 w-5 h-5 rounded text-indigo-600 shrink-0" />
+                        <div class="flex-1 min-w-0">
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold mb-1 ${meta.badgeClass}">${meta.icon} ${meta.label}</span>
+                          <p class="text-xs sm:text-sm ${checked ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-100'}">${t.text}</p>
+                        </div>
+                      </label>
+                    `;
+                  }).join("")}
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 pt-2">
+                  <div class="lg:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">📝 Anotação da Semana ${w.week}</label>
+                    <input type="text" value="${escapeHTML(appState.weekNotes[w.week] || '')}" onchange="updateWeekNote(${w.week}, this.value)" placeholder="Anote palavras novas, dúvidas ou pontos gramaticais..." class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                  </div>
+                  <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                      <span>🎯 Questões / Acertos</span>
+                      ${sc ? `<span class="font-bold">${sc.pct}%</span>` : ''}
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                      <input type="number" min="0" value="${appState.weekScores[w.week]?.total ?? ''}" onchange="updateWeekScore(${w.week}, 'total', this.value)" placeholder="Questões" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700" />
+                      <input type="number" min="0" value="${appState.weekScores[w.week]?.correct ?? ''}" onchange="updateWeekScore(${w.week}, 'correct', this.value)" placeholder="Acertos" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // 7. PAINEL IRODORI A1 (18 LIÇÕES)
+    // =========================================================================
+    function toggleIrodoriClassroom(checked) {
+      appState.irodoriClassroom = checked;
+      saveState();
+      renderIrodoriPanel();
+    }
+
+    function toggleIrodoriStep(id, step, checked) {
+      if (!appState.irodoriProgress[id]) appState.irodoriProgress[id] = { study: false, audio: false, shadow: false };
+      appState.irodoriProgress[id][step] = checked;
+      if (step === "study") appState.completedTasks[`w${id}_t1`] = checked;
+      saveState();
+      renderIrodoriPanel();
+    }
+
+    function renderIrodoriPanel() {
+      document.getElementById("irodori-classroom-check").checked = !!appState.irodoriClassroom;
+      const container = document.getElementById("irodori-lessons-container");
+      const topics = {};
+      IRODORI_LESSONS.forEach(l => {
+        if (!topics[l.topicNum]) topics[l.topicNum] = { title: l.topicTitle, items: [] };
+        topics[l.topicNum].items.push(l);
+      });
+
+      container.innerHTML = Object.keys(topics).map(tNum => `
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-rose-600 text-white text-xs font-extrabold flex items-center justify-center">${tNum}</span>
+            <h3 class="text-base sm:text-lg font-extrabold jp-font">${topics[tNum].title}</h3>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            ${topics[tNum].items.map(l => {
+              const p = appState.irodoriProgress[l.id] || { study: false, audio: false, shadow: false };
+              const done = p.study && p.audio && p.shadow;
+              return `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border ${done ? 'border-emerald-300 dark:border-emerald-800' : 'border-slate-200 dark:border-slate-800'} shadow-sm flex flex-col justify-between space-y-4">
+                  <div class="space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">${l.pages}</span>
+                      <span class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">Semana ${l.weekRef}</span>
+                    </div>
+                    <h4 class="text-base font-bold jp-font">${l.title}</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300"><strong>Objetivo (Can-do):</strong> ${l.cando}</p>
+                    <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 text-xs jp-font">
+                      <strong class="text-rose-600 dark:text-rose-400">Gramática-chave:</strong> ${l.grammar}
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold cursor-pointer ${p.study ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'}">
+                      <input type="checkbox" ${p.study ? 'checked' : ''} onchange="toggleIrodoriStep(${l.id}, 'study', this.checked)" class="rounded text-rose-600" />
+                      <span>📖 Leitura</span>
+                    </label>
+                    <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold cursor-pointer ${p.audio ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'}">
+                      <input type="checkbox" ${p.audio ? 'checked' : ''} onchange="toggleIrodoriStep(${l.id}, 'audio', this.checked)" class="rounded text-rose-600" />
+                      <span>🎧 Áudio</span>
+                    </label>
+                    <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold cursor-pointer ${p.shadow ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'}">
+                      <input type="checkbox" ${p.shadow ? 'checked' : ''} onchange="toggleIrodoriStep(${l.id}, 'shadow', this.checked)" class="rounded text-rose-600" />
+                      <span>🗣️ Shadowing</span>
+                    </label>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // =========================================================================
+    // 7B. PAINEL GENKI 1 (12 LIÇÕES — 3ª EDIÇÃO)
+    // =========================================================================
+    function toggleGenkiStep(id, step, checked) {
+      if (!appState.genkiProgress[id]) appState.genkiProgress[id] = { textbook: false, workbook: false, kanji: false };
+      appState.genkiProgress[id][step] = checked;
+      saveState();
+      renderGenkiPanel();
+    }
+
+    function renderGenkiPanel() {
+      const container = document.getElementById("genki-lessons-container");
+      container.innerHTML = GENKI_LESSONS.map(l => {
+        const p = appState.genkiProgress[l.id] || { textbook: false, workbook: false, kanji: false };
+        const done = p.textbook && p.workbook && p.kanji;
+        return `
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border ${done ? 'border-emerald-300 dark:border-emerald-800' : 'border-slate-200 dark:border-slate-800'} shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">Capítulo ${l.id}</span>
+                <span class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">${l.weeks}</span>
+              </div>
+              <h3 class="text-base font-extrabold jp-font text-slate-900 dark:text-white">${l.title}</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-300"><strong>Tema Comunicativo:</strong> ${l.theme}</p>
+              <div class="p-2.5 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 text-xs jp-font">
+                <strong class="text-indigo-700 dark:text-indigo-300">Gramática:</strong> ${l.grammar}
+              </div>
+              <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                <div><strong>Vocabulário-chave:</strong> ${l.vocab}</div>
+                <div class="jp-font"><strong>Reading & Writing:</strong> ${l.reading}</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold cursor-pointer ${p.textbook ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'}">
+                <input type="checkbox" ${p.textbook ? 'checked' : ''} onchange="toggleGenkiStep(${l.id}, 'textbook', this.checked)" class="rounded text-indigo-600" />
+                <span>📘 Livro Texto</span>
+              </label>
+              <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold cursor-pointer ${p.workbook ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'}">
+                <input type="checkbox" ${p.workbook ? 'checked' : ''} onchange="toggleGenkiStep(${l.id}, 'workbook', this.checked)" class="rounded text-indigo-600" />
+                <span>✍️ Workbook</span>
+              </label>
+              <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold cursor-pointer ${p.kanji ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'}">
+                <input type="checkbox" ${p.kanji ? 'checked' : ''} onchange="toggleGenkiStep(${l.id}, 'kanji', this.checked)" class="rounded text-indigo-600" />
+                <span>🈁 Leitura/Kanji</span>
+              </label>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // 7C. PAINEL GUIA DE GRAMÁTICA DO TAE KIM (EM PORTUGUÊS — 30 MÓDULOS)
+    // =========================================================================
+    function toggleTaeKimStep(id, step, checked) {
+      if (!appState.taekimProgress[id]) appState.taekimProgress[id] = { read: false, practice: false };
+      appState.taekimProgress[id][step] = checked;
+      saveState();
+      renderTaeKimPanel();
+    }
+
+    function renderTaeKimPanel() {
+      const container = document.getElementById("taekim-modules-container");
+      const sections = {};
+      TAEKIM_MODULES.forEach(m => {
+        if (!sections[m.section]) sections[m.section] = [];
+        sections[m.section].push(m);
+      });
+
+      container.innerHTML = Object.keys(sections).map(secName => `
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-1 rounded-lg bg-amber-600 text-white text-xs font-extrabold">${secName.split('.')[0]}</span>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">${secName}</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            ${sections[secName].map(m => {
+              const p = appState.taekimProgress[m.id] || { read: false, practice: false };
+              const done = p.read && p.practice;
+              return `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border ${done ? 'border-emerald-300 dark:border-emerald-800' : 'border-slate-200 dark:border-slate-800'} shadow-sm flex flex-col justify-between space-y-3">
+                  <div class="space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">Módulo ${m.id}</span>
+                      <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">Equiv: ${m.genkiRef}</span>
+                    </div>
+                    <h4 class="text-sm sm:text-base font-bold jp-font text-slate-900 dark:text-white">${m.title}</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${m.desc}</p>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                    <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold cursor-pointer ${p.read ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'}">
+                      <input type="checkbox" ${p.read ? 'checked' : ''} onchange="toggleTaeKimStep(${m.id}, 'read', this.checked)" class="rounded text-amber-600" />
+                      <span>📖 Leitura/Notas</span>
+                    </label>
+                    <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold cursor-pointer ${p.practice ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'}">
+                      <input type="checkbox" ${p.practice ? 'checked' : ''} onchange="toggleTaeKimStep(${m.id}, 'practice', this.checked)" class="rounded text-amber-600" />
+                      <span>🧩 Revisão Prática</span>
+                    </label>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // =========================================================================
+    // 8. ROTINA, MATERIAIS EXTRAS JP & CONFIGURADOR DE TEMPO
+    // =========================================================================
+    function addJpExtraMaterial(ev) {
+      ev.preventDefault();
+      const nameInput = document.getElementById("jp-extra-name");
+      const typeSelect = document.getElementById("jp-extra-type");
+      const notesInput = document.getElementById("jp-extra-notes");
+
+      const name = nameInput.value.trim();
+      if (!name) return;
+
+      appState.jpExtraMaterials.push({
+        id: "jp_ext_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+        name,
+        type: typeSelect.value || "app",
+        notes: notesInput.value.trim(),
+        done: false
+      });
+
+      nameInput.value = "";
+      notesInput.value = "";
+      saveState();
+      renderJpExtraMaterials();
+      showToast("Material extra de japonês adicionado!");
+    }
+
+    function toggleJpExtraDone(id) {
+      const item = appState.jpExtraMaterials.find(x => x.id === id);
+      if (!item) return;
+      item.done = !item.done;
+      saveState();
+      renderJpExtraMaterials();
+    }
+
+    function deleteJpExtraMaterial(id) {
+      appState.jpExtraMaterials = appState.jpExtraMaterials.filter(x => x.id !== id);
+      saveState();
+      renderJpExtraMaterials();
+      showToast("Material removido.");
+    }
+
+    function renderJpExtraMaterials() {
+      const listEl = document.getElementById("jp-extras-list");
+      const countEl = document.getElementById("jp-extras-count");
+      const items = appState.jpExtraMaterials || [];
+
+      if (countEl) {
+        const doneCount = items.filter(i => i.done).length;
+        countEl.textContent = `${items.length} ${items.length === 1 ? 'material cadastrado' : 'materiais cadastrados'}${items.length ? ` (${doneCount} concluído${doneCount === 1 ? '' : 's'})` : ''}`;
+      }
+
+      if (!listEl) return;
+      if (items.length === 0) {
+        listEl.innerHTML = `
+          <div class="col-span-full p-5 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            Nenhum material extra adicionado ainda. Use o formulário acima sempre que encontrar um novo app, canal ou e-book de japonês!
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = items.map(item => {
+        const meta = JP_EXTRA_TYPES[item.type] || JP_EXTRA_TYPES.app;
+        return `
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border ${item.done ? 'border-emerald-300 dark:border-emerald-800/70 opacity-80' : 'border-slate-200 dark:border-slate-700'} flex items-start justify-between gap-3 transition">
+            <label class="flex items-start gap-3 cursor-pointer flex-1 min-w-0 select-none">
+              <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleJpExtraDone('${item.id}')" class="mt-0.5 w-5 h-5 rounded text-rose-600 focus:ring-rose-500 shrink-0" />
+              <div class="min-w-0 space-y-1">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold ${meta.badgeClass}">
+                  ${meta.icon} ${meta.label}
+                </span>
+                <div class="text-sm font-bold ${item.done ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'} break-words">
+                  ${escapeHTML(item.name)}
+                </div>
+                ${item.notes ? `<p class="text-xs text-slate-600 dark:text-slate-300 break-words">${escapeHTML(item.notes)}</p>` : ''}
+              </div>
+            </label>
+            <button type="button" onclick="deleteJpExtraMaterial('${item.id}')" title="Remover material" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition text-xs font-bold shrink-0">
+              ✕
+            </button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function setDailyMinutes(val) {
+      const parsed = parseInt(val, 10);
+      if (isNaN(parsed) || parsed < 30) return;
+      const clamped = Math.min(720, Math.max(30, parsed));
+      appState.scheduleConfig.dailyMinutes = clamped;
+
+      const jpSess = clamped;
+      const krSess = Math.round(clamped * 0.5);
+      const enSess = Math.max(0, clamped - krSess);
+      appState.scheduleConfig.sessionMinutes = { jp: jpSess, kr: krSess, en: enSess };
+
+      saveState();
+      renderTimeConfigurator();
+      renderDailyGrid();
+    }
+
+    function setAllocUnit(unit) {
+      appState.scheduleConfig.allocUnit = unit;
+      saveState();
+      renderTimeConfigurator();
+    }
+
+    function updateLangAllocation(lang, rawVal) {
+      const num = parseFloat(rawVal);
+      if (isNaN(num) || num < 0) return;
+      const sessionsPerWeek = lang === "jp" ? 3 : 2;
+      const unit = appState.scheduleConfig.allocUnit;
+
+      const sessionMins = unit === "session"
+        ? Math.round(num)
+        : Math.round((num * 60) / sessionsPerWeek);
+
+      appState.scheduleConfig.sessionMinutes[lang] = Math.max(0, sessionMins);
+      saveState();
+      renderTimeConfigurator(lang);
+      renderDailyGrid();
+    }
+
+    function resetScheduleTimeDefaults() {
+      appState.scheduleConfig = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE_CONFIG));
+      saveState();
+      renderTimeConfigurator();
+      renderDailyGrid();
+      showToast("Carga horária restaurada para 2h/dia.");
+    }
+
+    function renderTimeConfigurator(skipInputLang = null) {
+      const cfg = appState.scheduleConfig;
+      const blocks = getDailyBlocks(cfg.dailyMinutes);
+      const hDecimal = Number.isInteger(blocks.total / 60) ? `${blocks.total / 60}h` : `${(blocks.total / 60).toFixed(1)}h`;
+
+      document.getElementById("cfg-daily-badge").textContent = `${hDecimal} (${blocks.total} min/dia)`;
+      const customInput = document.getElementById("cfg-custom-minutes");
+      if (document.activeElement !== customInput) customInput.value = blocks.total;
+
+      document.querySelectorAll(".preset-min-btn").forEach(btn => {
+        const isMatch = Number(btn.getAttribute("data-preset-min")) === blocks.total;
+        btn.className = isMatch
+          ? "preset-min-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm transition"
+          : "preset-min-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 transition";
+      });
+
+      document.getElementById("cfg-b1-label").textContent = `${blocks.b1} min`;
+      document.getElementById("cfg-b2-label").textContent = `${blocks.b2} min`;
+      document.getElementById("cfg-b3-label").textContent = `${blocks.b3} min`;
+
+      document.getElementById("grid-subtitle-hours").textContent = `~${hDecimal}/dia`;
+      document.getElementById("grid-description-blocks").textContent = `Você não estuda a mesma coisa todos os dias: distribua as tarefas da semana nos 5 dias úteis em 3 blocos (${blocks.b1}m + ${blocks.b2}m + ${blocks.b3}m).`;
+      document.getElementById("explain-b1-title").textContent = `BLOCO 1 • ${blocks.b1} MIN — AQUECIMENTO ATIVO`;
+      document.getElementById("explain-b2-title").textContent = `BLOCO 2 • ${blocks.b2} MIN — ESTUDO DENSO`;
+      document.getElementById("explain-b3-title").textContent = `BLOCO 3 • ${blocks.b3} MIN — ESCUTA & IMERSÃO`;
+
+      const u = cfg.allocUnit;
+      document.getElementById("alloc-unit-session").className = u === "session"
+        ? "px-2 py-1 rounded-md text-[11px] font-bold bg-indigo-600 text-white transition"
+        : "px-2 py-1 rounded-md text-[11px] font-bold text-slate-600 dark:text-slate-300 transition";
+      document.getElementById("alloc-unit-week").className = u === "week"
+        ? "px-2 py-1 rounded-md text-[11px] font-bold bg-indigo-600 text-white transition"
+        : "px-2 py-1 rounded-md text-[11px] font-bold text-slate-600 dark:text-slate-300 transition";
+
+      const sm = cfg.sessionMinutes;
+      const freqs = { jp: 3, kr: 2, en: 2 };
+      let totalWeeklyMins = 0;
+
+      ["jp", "kr", "en"].forEach(lang => {
+        const sMin = Number(sm[lang] || 0);
+        const wMin = sMin * freqs[lang];
+        totalWeeklyMins += wMin;
+
+        const inp = document.getElementById(`alloc-input-${lang}`);
+        if (skipInputLang !== lang) {
+          inp.step = u === "session" ? "5" : "0.5";
+          inp.value = u === "session" ? sMin : Number((wMin / 60).toFixed(1));
+        }
+        document.getElementById(`alloc-sub-${lang}`).textContent = `${sMin}m/sessão • ${formatHoursOrMinutes(wMin)}/sem`;
+      });
+
+      const targetWeeklyMins = blocks.total * 5;
+      const diffMins = totalWeeklyMins - targetWeeklyMins;
+      document.getElementById("alloc-weekly-total").textContent = `${formatHoursOrMinutes(totalWeeklyMins)} (${totalWeeklyMins} min/sem)`;
+
+      const diffEl = document.getElementById("alloc-weekly-diff");
+      if (diffMins === 0) {
+        diffEl.textContent = `Alinhado com a meta semanal (${formatHoursOrMinutes(targetWeeklyMins)})`;
+        diffEl.className = "text-[11px] font-semibold text-emerald-600 dark:text-emerald-400";
+      } else if (diffMins > 0) {
+        diffEl.textContent = `+${formatHoursOrMinutes(diffMins)} acima da meta diária base`;
+        diffEl.className = "text-[11px] font-semibold text-indigo-600 dark:text-indigo-400";
+      } else {
+        diffEl.textContent = `${formatHoursOrMinutes(Math.abs(diffMins))} livres para revisão/imersão`;
+        diffEl.className = "text-[11px] font-semibold text-amber-600 dark:text-amber-400";
+      }
+    }
+
+    function setDailyGridPhase(p) {
+      dailyGridPhase = p;
+      const b1 = document.getElementById("grid-phase-btn-1");
+      const b2 = document.getElementById("grid-phase-btn-2");
+      b1.className = p === 1 ? "px-3.5 py-2 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm" : "px-3.5 py-2 rounded-lg text-xs font-bold transition text-slate-600 dark:text-slate-300";
+      b2.className = p === 2 ? "px-3.5 py-2 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm" : "px-3.5 py-2 rounded-lg text-xs font-bold transition text-slate-600 dark:text-slate-300";
+      renderDailyGrid();
+    }
+
+    function updateLangSlot(lang, field, value) {
+      if (!appState.langSlots) appState.langSlots = { kr: {}, en: {} };
+      appState.langSlots[lang][field] = value;
+      saveState();
+      if (dailyGridPhase === 2) renderDailyGrid();
+    }
+
+    function renderDailyGrid() {
+      const container = document.getElementById("daily-grid-container");
+      const kr = appState.langSlots?.kr || {};
+      const en = appState.langSlots?.en || {};
+      const blocks = getDailyBlocks(appState.scheduleConfig?.dailyMinutes || 120);
+      const sm = appState.scheduleConfig?.sessionMinutes || { jp: 120, kr: 60, en: 60 };
+
+      const krSummary = [kr.ebook, kr.youtube, kr.apps].filter(Boolean).join(" + ") || "Hangul + E-book/Canal Coreano (preencha abaixo)";
+      const enSummary = [en.ebook, en.youtube, en.apps].filter(Boolean).join(" + ") || "Leitura + YouTube/Apps Inglês (preencha abaixo)";
+
+      const jpBlocks = getDailyBlocks(sm.jp || blocks.total);
+      const krMin = Number(sm.kr || 60);
+      const enMin = Number(sm.en || 60);
+      const tThuWarmup = Math.max(15, Math.round((krMin + enMin) * 0.2));
+      const krNet = Math.max(10, krMin - Math.round(tThuWarmup / 2));
+      const enNet = Math.max(10, enMin - Math.floor(tThuWarmup / 2));
+
+      const days = dailyGridPhase === 1 ? [
+        { day: "Segunda", tag: `Irodori (${formatCompactDuration(blocks.total)})`, cls: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300", b1Label: `BLOCO 1 (${blocks.b1} min)`, b1: "Hiragana/Katakana (Write Japanese + Drops)", b2Label: `BLOCO 2 (${blocks.b2} min)`, b2: "📕 Irodori A1: Diálogos e Notas Gramaticais em PT", b3Label: `BLOCO 3 (${blocks.b3} min)`, b3: "Áudios MP3 do Irodori (escuta + repetição)" },
+        { day: "Terça", tag: `Genki 1 (${formatCompactDuration(blocks.total)})`, cls: "bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300", b1Label: `BLOCO 1 (${blocks.b1} min)`, b1: "Traçado de Kana + vocabulário Drops", b2Label: `BLOCO 2 (${blocks.b2} min)`, b2: "📘 Genki 1: Gramática nova e diálogos do capítulo", b3Label: `BLOCO 3 (${blocks.b3} min)`, b3: "Comprehensible Japanese (YouTube)" },
+        { day: "Quarta", tag: `Irodori (${formatCompactDuration(blocks.total)})`, cls: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300", b1Label: `BLOCO 1 (${blocks.b1} min)`, b1: "Kanji básicos + revisão Drops", b2Label: `BLOCO 2 (${blocks.b2} min)`, b2: "📕 Irodori A1: Atividades e Leitura de Kana/Kanji", b3Label: `BLOCO 3 (${blocks.b3} min)`, b3: "Shadowing completo da lição do Irodori" },
+        { day: "Quinta", tag: `Tae Kim (${formatCompactDuration(blocks.total)})`, cls: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300", b1Label: `BLOCO 1 (${blocks.b1} min)`, b1: "Escrita ativa de palavras da semana", b2Label: `BLOCO 2 (${blocks.b2} min)`, b2: "📘 Genki 1 Workbook + 📙 Guia do Tae Kim", b3Label: `BLOCO 3 (${blocks.b3} min)`, b3: "Japanese with Lily / Japanese Super Immersion" },
+        { day: "Sexta", tag: `Revisão (${formatCompactDuration(blocks.total)})`, cls: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300", b1Label: `BLOCO 1 (${blocks.b1} min)`, b1: "Revisão geral de Kana/Kanji no app", b2Label: `BLOCO 2 (${blocks.b2} min)`, b2: "Revisão semanal + marcar metas no site", b3Label: `BLOCO 3 (${blocks.b3} min)`, b3: "Imersão livre no YouTube em japonês" }
+      ] : [
+        { day: "Segunda", tag: `🇯🇵 JP (${formatCompactDuration(jpBlocks.total)})`, cls: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300", b1Label: `BLOCO 1 (${jpBlocks.b1} min)`, b1: "Kanji + Drops Japonês", b2Label: `BLOCO 2 (${jpBlocks.b2} min)`, b2: "📕 Irodori A1 + 📘 Genki 1", b3Label: `BLOCO 3 (${jpBlocks.b3} min)`, b3: "Áudios Irodori / YouTube JP" },
+        { day: "Terça", tag: `🇰🇷 ${formatCompactDuration(krMin)} + 🇺🇸 ${formatCompactDuration(enMin)}`, cls: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300", b1Label: `AQUECIMENTO (${tThuWarmup} min)`, b1: "Drops Coreano & Inglês", b2Label: `🇰🇷 COREANO (${krNet} min)`, b2: escapeHTML(krSummary), b3Label: `🇺🇸 INGLÊS (${enNet} min)`, b3: escapeHTML(enSummary) },
+        { day: "Quarta", tag: `🇯🇵 JP (${formatCompactDuration(jpBlocks.total)})`, cls: "bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300", b1Label: `BLOCO 1 (${jpBlocks.b1} min)`, b1: "Write Japanese / Kanji", b2Label: `BLOCO 2 (${jpBlocks.b2} min)`, b2: "📘 Genki 1 + 📙 Guia Tae Kim", b3Label: `BLOCO 3 (${jpBlocks.b3} min)`, b3: "Imersão YouTube Japonês" },
+        { day: "Quinta", tag: `🇺🇸 ${formatCompactDuration(enMin)} + 🇰🇷 ${formatCompactDuration(krMin)}`, cls: "bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300", b1Label: `REVISÃO (${tThuWarmup} min)`, b1: "Vocabulário ativo KR/EN", b2Label: `🇺🇸 INGLÊS (${enNet} min)`, b2: escapeHTML(enSummary), b3Label: `🇰🇷 COREANO (${krNet} min)`, b3: escapeHTML(krSummary) },
+        { day: "Sexta", tag: `🇯🇵 Revisão (${formatCompactDuration(jpBlocks.total)})`, cls: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300", b1Label: `BLOCO 1 (${jpBlocks.b1} min)`, b1: "Revisão trilíngue rápida", b2Label: `BLOCO 2 (${jpBlocks.b2} min)`, b2: "📘 Genki 1 Workbook + Checklists", b3Label: `BLOCO 3 (${jpBlocks.b3} min)`, b3: "Imersão + registro de métricas" }
+      ];
+
+      container.innerHTML = days.map(d => `
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700 space-y-2.5">
+          <div class="flex items-center justify-between gap-1 border-b border-slate-200/70 dark:border-slate-700 pb-2">
+            <span class="text-sm font-extrabold">${d.day}</span>
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${d.cls}">${d.tag}</span>
+          </div>
+          <div class="p-2 rounded-lg bg-white dark:bg-slate-900/80 text-xs">
+            <div class="text-[10px] font-bold text-amber-600 dark:text-amber-400">${d.b1Label}</div>
+            <div>${d.b1}</div>
+          </div>
+          <div class="p-2 rounded-lg bg-white dark:bg-slate-900/80 text-xs">
+            <div class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">${d.b2Label}</div>
+            <div>${d.b2}</div>
+          </div>
+          <div class="p-2 rounded-lg bg-white dark:bg-slate-900/80 text-xs">
+            <div class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">${d.b3Label}</div>
+            <div>${d.b3}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderRoutinePanel() {
+      const s = appState.langSlots || { kr: {}, en: {} };
+      document.getElementById("slot-kr-ebook").value = s.kr?.ebook || "";
+      document.getElementById("slot-kr-youtube").value = s.kr?.youtube || "";
+      document.getElementById("slot-kr-apps").value = s.kr?.apps || "";
+      document.getElementById("slot-en-ebook").value = s.en?.ebook || "";
+      document.getElementById("slot-en-youtube").value = s.en?.youtube || "";
+      document.getElementById("slot-en-apps").value = s.en?.apps || "";
+      renderTimeConfigurator();
+      renderDailyGrid();
+      renderJpExtraMaterials();
+    }
+
+    // =========================================================================
+    // 9. MÉTRICAS & PROGRESSO
+    // =========================================================================
+    function updateAllProgressUI() {
+      let total = 0, done = 0, jpTot = 0, jpDone = 0, krenTot = 0, krenDone = 0;
+      const matStats = {};
+      Object.keys(MATERIAL_META).forEach(k => { matStats[k] = { total: 0, done: 0 }; });
+
+      WEEKS_DATA.forEach(w => {
+        w.tasks.forEach(t => {
+          total++;
+          const ok = !!appState.completedTasks[t.id];
+          if (ok) done++;
+          if (t.lang === "jp") { jpTot++; if (ok) jpDone++; }
+          else { krenTot++; if (ok) krenDone++; }
+          if (matStats[t.mat]) { matStats[t.mat].total++; if (ok) matStats[t.mat].done++; }
+        });
+      });
+
+      // Irodori A1 stats
+      let iroDone = 0, iroStudy = 0, iroAudio = 0, iroShadow = 0;
+      IRODORI_LESSONS.forEach(l => {
+        const p = appState.irodoriProgress[l.id] || {};
+        if (p.study) iroStudy++;
+        if (p.audio) iroAudio++;
+        if (p.shadow) iroShadow++;
+        if (p.study && p.audio) iroDone++;
+      });
+
+      // Genki 1 stats
+      let genkiDone = 0, genkiTextbook = 0, genkiWorkbook = 0, genkiKanji = 0;
+      GENKI_LESSONS.forEach(l => {
+        const p = appState.genkiProgress[l.id] || {};
+        if (p.textbook) genkiTextbook++;
+        if (p.workbook) genkiWorkbook++;
+        if (p.kanji) genkiKanji++;
+        if (p.textbook && p.workbook) genkiDone++;
+      });
+
+      // Tae Kim stats
+      let taekimDone = 0, taekimRead = 0, taekimPractice = 0;
+      TAEKIM_MODULES.forEach(m => {
+        const p = appState.taekimProgress[m.id] || {};
+        if (p.read) taekimRead++;
+        if (p.practice) taekimPractice++;
+        if (p.read) taekimDone++;
+      });
+
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      document.getElementById("header-global-pct").textContent = `${pct}%`;
+      document.getElementById("header-global-bar").style.width = `${pct}%`;
+      document.getElementById("header-global-count").textContent = `${done} de ${total} tarefas`;
+
+      const iroPct = Math.round((iroDone / 18) * 100);
+      document.getElementById("header-irodori-pct").textContent = `${iroDone}/18`;
+      document.getElementById("header-irodori-bar").style.width = `${iroPct}%`;
+      document.getElementById("header-irodori-sub").textContent = `${iroDone} lições completas`;
+      document.getElementById("tab-irodori-badge").textContent = `${iroDone}/18`;
+
+      const gPct = Math.round((genkiDone / 12) * 100);
+      document.getElementById("header-genki-pct").textContent = `${genkiDone}/12`;
+      document.getElementById("header-genki-bar").style.width = `${gPct}%`;
+      document.getElementById("header-genki-sub").textContent = `${genkiDone} capítulos concluídos`;
+      document.getElementById("tab-genki-badge").textContent = `${genkiDone}/12`;
+
+      const tkPct = Math.round((taekimDone / 30) * 100);
+      document.getElementById("header-taekim-pct").textContent = `${taekimDone}/30`;
+      document.getElementById("header-taekim-bar").style.width = `${tkPct}%`;
+      document.getElementById("header-taekim-sub").textContent = `${taekimDone} módulos estudados`;
+      document.getElementById("tab-taekim-badge").textContent = `${taekimDone}/30`;
+
+      document.getElementById("header-jp-pct").textContent = `${jpTot ? Math.round((jpDone / jpTot) * 100) : 0}%`;
+      document.getElementById("header-jp-bar").style.width = `${jpTot ? Math.round((jpDone / jpTot) * 100) : 0}%`;
+
+      document.getElementById("header-kr-en-pct").textContent = `${krenTot ? Math.round((krenDone / krenTot) * 100) : 0}%`;
+      document.getElementById("header-kr-en-bar").style.width = `${krenTot ? Math.round((krenDone / krenTot) * 100) : 0}%`;
+
+      // Painel Irodori
+      const panelComp = document.getElementById("irodori-panel-completed");
+      if (panelComp) {
+        panelComp.textContent = `${iroDone} / 18`;
+        document.getElementById("irodori-panel-pct").textContent = `${iroPct}%`;
+        document.getElementById("irodori-panel-bar").style.width = `${iroPct}%`;
+        document.getElementById("irodori-stat-study").textContent = iroStudy;
+        document.getElementById("irodori-stat-audio").textContent = iroAudio;
+        document.getElementById("irodori-stat-shadow").textContent = iroShadow;
+      }
+
+      // Painel Genki 1
+      const genkiPanelComp = document.getElementById("genki-panel-completed");
+      if (genkiPanelComp) {
+        genkiPanelComp.textContent = `${genkiDone} / 12`;
+        document.getElementById("genki-panel-pct").textContent = `${gPct}%`;
+        document.getElementById("genki-panel-bar").style.width = `${gPct}%`;
+        document.getElementById("genki-stat-textbook").textContent = genkiTextbook;
+        document.getElementById("genki-stat-workbook").textContent = genkiWorkbook;
+        document.getElementById("genki-stat-kanji").textContent = genkiKanji;
+      }
+
+      // Painel Tae Kim
+      const tkPanelComp = document.getElementById("taekim-panel-completed");
+      if (tkPanelComp) {
+        tkPanelComp.textContent = `${taekimDone} / 30`;
+        document.getElementById("taekim-panel-pct").textContent = `${tkPct}%`;
+        document.getElementById("taekim-panel-bar").style.width = `${tkPct}%`;
+        document.getElementById("taekim-stat-read").textContent = taekimRead;
+        document.getElementById("taekim-stat-practice").textContent = taekimPractice;
+      }
+
+      window._stats = { total, done, pct, iroDone, genkiDone, taekimDone, matStats };
+    }
+
+    function renderMetricsPanel() {
+      updateAllProgressUI();
+      const s = window._stats;
+      document.getElementById("metric-tasks-done").textContent = `${s.done} / ${s.total}`;
+      document.getElementById("metric-tasks-pct").textContent = `${s.pct}% do plano anual`;
+      document.getElementById("metric-books-summary").textContent = `Irodori ${s.iroDone}/18 • Genki ${s.genkiDone}/12`;
+      document.getElementById("metric-taekim-sub").textContent = `Tae Kim: ${s.taekimDone}/30 módulos`;
+
+      document.getElementById("material-progress-bars").innerHTML = Object.keys(MATERIAL_META).map(k => {
+        const meta = MATERIAL_META[k], st = s.matStats[k];
+        const p = st.total ? Math.round((st.done / st.total) * 100) : 0;
+        return `
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs sm:text-sm font-semibold">
+              <span>${meta.icon} ${meta.label}</span>
+              <span>${st.done}/${st.total} (${p}%)</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-full ${meta.barColor} rounded-full" style="width:${p}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      let sumQ = 0, sumC = 0;
+      const list = [];
+      Object.keys(appState.weekScores).forEach(w => {
+        const sc = appState.weekScores[w];
+        if (sc && Number(sc.total) > 0) {
+          sumQ += Number(sc.total);
+          sumC += Math.min(Number(sc.total), Number(sc.correct || 0));
+          list.push({ week: Number(w), ...getScoreBadge(sc) });
+        }
+      });
+
+      document.getElementById("metric-questions-total").textContent = sumQ;
+      document.getElementById("metric-questions-correct").textContent = `${sumC} acertos registrados`;
+      document.getElementById("metric-accuracy-rate").textContent = sumQ ? `${Math.round((sumC / sumQ) * 100)}%` : "—";
+
+      const perfEl = document.getElementById("performance-history-list");
+      perfEl.innerHTML = list.length === 0
+        ? `<p class="col-span-full text-xs text-slate-500">Nenhuma questão registrada ainda. Abra qualquer semana no Cronograma para registrar.</p>`
+        : list.sort((a, b) => a.week - b.week).map(i => `
+          <div class="p-3.5 rounded-xl border ${i.cls} flex items-center justify-between">
+            <div><div class="text-xs font-extrabold">Semana ${i.week}</div><div class="text-[11px]">${i.correct} de ${i.total} acertos</div></div>
+            <div class="text-lg font-extrabold">${i.pct}%</div>
+          </div>
+        `).join("");
+    }
+
+    // =========================================================================
+    // 10. BACKUP JSON & RESET
+    // =========================================================================
+    function exportBackup() {
+      const blob = new Blob([JSON.stringify(appState, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `backup_cronograma_poliglota_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Backup JSON exportado!");
+    }
+
+    function importBackup(ev) {
+      const file = ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          appState = {
+            ...appState,
+            ...imported,
+            genkiProgress: imported.genkiProgress || {},
+            taekimProgress: imported.taekimProgress || {},
+            jpExtraMaterials: Array.isArray(imported.jpExtraMaterials) ? imported.jpExtraMaterials : [],
+            scheduleConfig: {
+              ...JSON.parse(JSON.stringify(DEFAULT_SCHEDULE_CONFIG)),
+              ...(imported.scheduleConfig || {}),
+              sessionMinutes: {
+                ...DEFAULT_SCHEDULE_CONFIG.sessionMinutes,
+                ...(imported.scheduleConfig?.sessionMinutes || {})
+              }
+            }
+          };
+          saveState();
+          renderSchedule();
+          renderIrodoriPanel();
+          renderGenkiPanel();
+          renderTaeKimPanel();
+          renderRoutinePanel();
+          showToast("Backup restaurado com sucesso!");
+        } catch {
+          showToast("Arquivo JSON inválido.", true);
+        }
+      };
+      reader.readAsText(file);
+      ev.target.value = "";
+    }
+
+    function confirmReset() {
+      openConfirm("Resetar todo o progresso?", "Isso apagará todas as tarefas marcadas, lições do Irodori, Genki 1, Guia Tae Kim e métricas salvas.", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        appState.completedTasks = {};
+        appState.irodoriClassroom = false;
+        appState.irodoriProgress = {};
+        appState.genkiProgress = {};
+        appState.taekimProgress = {};
+        appState.weekNotes = {};
+        appState.weekScores = {};
+        saveState();
+        renderSchedule();
+        renderIrodoriPanel();
+        renderGenkiPanel();
+        renderTaeKimPanel();
+        showToast("Progresso resetado.");
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadState();
+      updateAllProgressUI();
+      renderSchedule();
+      renderIrodoriPanel();
+      renderGenkiPanel();
+      renderTaeKimPanel();
+      renderRoutinePanel();
+    });
+  </script>
+</body>
+</html>
